@@ -1,6 +1,8 @@
 
 # requirements
-you need to install meson and make sure your gcc/g++ support cpp 23
+1. meson 1.6.0
+2. gcc/g++ support cpp 23
+3. doxygen 1.13.2
 
 # First time setup
 
@@ -15,5 +17,10 @@ $ meson compile -C build
 compile and run tests 
 
 $ meson test -C build 
+
+# Building docs
+
+$ doxygen docs/Doxyfile
+
 
 
