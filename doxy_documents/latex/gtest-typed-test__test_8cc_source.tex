@@ -1,0 +1,429 @@
+\doxysection{gtest-\/typed-\/test\+\_\+test.cc}
+\hypertarget{gtest-typed-test__test_8cc_source}{}\label{gtest-typed-test__test_8cc_source}\index{/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/subprojects/googletest-\/1.15.2/googletest/test/gtest-\/typed-\/test\_test.cc@{/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/subprojects/googletest-\/1.15.2/googletest/test/gtest-\/typed-\/test\_test.cc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ 2008\ Google\ Inc.}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Redistribution\ and\ use\ in\ source\ and\ binary\ forms,\ with\ or\ without}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ modification,\ are\ permitted\ provided\ that\ the\ following\ conditions\ are}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ met:}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ \ \ \ \ *\ Redistributions\ of\ source\ code\ must\ retain\ the\ above\ copyright}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ \ \ \ \ *\ Redistributions\ in\ binary\ form\ must\ reproduce\ the\ above}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ copyright\ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ in\ the\ documentation\ and/or\ other\ materials\ provided\ with\ the}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ \ \ \ \ *\ Neither\ the\ name\ of\ Google\ Inc.\ nor\ the\ names\ of\ its}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ contributors\ may\ be\ used\ to\ endorse\ or\ promote\ products\ derived\ from}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ this\ software\ without\ specific\ prior\ written\ permission.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ THE\ COPYRIGHT\ HOLDERS\ AND\ CONTRIBUTORS}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ "{}AS\ IS"{}\ AND\ ANY\ EXPRESS\ OR\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ LIMITED\ TO,\ THE\ IMPLIED\ WARRANTIES\ OF\ MERCHANTABILITY\ AND\ FITNESS\ FOR}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ A\ PARTICULAR\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO\ EVENT\ SHALL\ THE\ COPYRIGHT}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ OWNER\ OR\ CONTRIBUTORS\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ SPECIAL,\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ LIMITED\ TO,\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ DATA,\ OR\ PROFITS;\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ THEORY\ OF\ LIABILITY,\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ (INCLUDING\ NEGLIGENCE\ OR\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ OF\ THIS\ SOFTWARE,\ EVEN\ IF\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}test/gtest-\/typed-\/test\_test.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <set>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <type\_traits>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}gtest/gtest.h"{}}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ GTEST\_DISABLE\_MSC\_WARNINGS\_PUSH\_(4127\ \textcolor{comment}{/*\ conditional\ expression\ is\ constant\ */})}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ using\ testing::\mbox{\hyperlink{classtesting_1_1_test}{Test}};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{//\ Used\ for\ testing\ that\ SetUpTestSuite()/TearDownTestSuite(),\ fixture}}
+\DoxyCodeLine{00044\ \textcolor{comment}{//\ ctor/dtor,\ and\ SetUp()/TearDown()\ work\ correctly\ in\ typed\ tests\ and}}
+\DoxyCodeLine{00045\ \textcolor{comment}{//\ type-\/parameterized\ test.}}
+\DoxyCodeLine{00046\ template\ <typename\ T>}
+\DoxyCodeLine{00047\ class\ CommonTest\ :\ public\ Test\ \{}
+\DoxyCodeLine{00048\ \ \ \textcolor{comment}{//\ For\ some\ technical\ reason,\ SetUpTestSuite()\ and\ TearDownTestSuite()}}
+\DoxyCodeLine{00049\ \ \ \textcolor{comment}{//\ must\ be\ public.}}
+\DoxyCodeLine{00050\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00051\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ SetUpTestSuite()\ \{\ shared\_\ =\ \textcolor{keyword}{new}\ T(5);\ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ TearDownTestSuite()\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{delete}\ shared\_;}
+\DoxyCodeLine{00055\ \ \ \ \ shared\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00056\ \ \ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \textcolor{comment}{//\ This\ 'protected:'\ is\ optional.\ \ There's\ no\ harm\ in\ making\ all}}
+\DoxyCodeLine{00059\ \ \ \textcolor{comment}{//\ members\ of\ this\ fixture\ class\ template\ public.}}
+\DoxyCodeLine{00060\ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00061\ \ \ \textcolor{comment}{//\ We\ used\ to\ use\ std::list\ here,\ but\ switched\ to\ std::vector\ since}}
+\DoxyCodeLine{00062\ \ \ \textcolor{comment}{//\ MSVC's\ <list>\ doesn't\ compile\ cleanly\ with\ /W4.}}
+\DoxyCodeLine{00063\ \ \ \textcolor{keyword}{typedef}\ std::vector<T>\ Vector;}
+\DoxyCodeLine{00064\ \ \ \textcolor{keyword}{typedef}\ std::set<int>\ IntSet;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ CommonTest()\ :\ value\_(1)\ \{\}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \string~CommonTest()\textcolor{keyword}{\ override\ }\{\ EXPECT\_EQ(3,\ value\_);\ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \textcolor{keywordtype}{void}\ SetUp()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00071\ \ \ \ \ EXPECT\_EQ(1,\ value\_);}
+\DoxyCodeLine{00072\ \ \ \ \ value\_++;}
+\DoxyCodeLine{00073\ \ \ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \textcolor{keywordtype}{void}\ TearDown()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00076\ \ \ \ \ EXPECT\_EQ(2,\ value\_);}
+\DoxyCodeLine{00077\ \ \ \ \ value\_++;}
+\DoxyCodeLine{00078\ \ \ \}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ T\ value\_;}
+\DoxyCodeLine{00081\ \ \ \textcolor{keyword}{static}\ T*\ shared\_;}
+\DoxyCodeLine{00082\ \};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00085\ T*\ CommonTest<T>::shared\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{keyword}{using\ }testing::Types;}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{comment}{//\ Tests\ that\ SetUpTestSuite()/TearDownTestSuite(),\ fixture\ ctor/dtor,}}
+\DoxyCodeLine{00090\ \textcolor{comment}{//\ and\ SetUp()/TearDown()\ work\ correctly\ in\ typed\ tests}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keyword}{typedef}\ Types<char,\ int>\ TwoTypes;}
+\DoxyCodeLine{00093\ TYPED\_TEST\_SUITE(\mbox{\hyperlink{class_common_test}{CommonTest}},\ TwoTypes);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ TYPED\_TEST(\mbox{\hyperlink{class_common_test}{CommonTest}},\ ValuesAreCorrect)\ \{}
+\DoxyCodeLine{00096\ \ \ \textcolor{comment}{//\ Static\ members\ of\ the\ fixture\ class\ template\ can\ be\ visited\ via}}
+\DoxyCodeLine{00097\ \ \ \textcolor{comment}{//\ the\ TestFixture::\ prefix.}}
+\DoxyCodeLine{00098\ \ \ EXPECT\_EQ(5,\ *TestFixture::shared\_);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \textcolor{comment}{//\ Typedefs\ in\ the\ fixture\ class\ template\ can\ be\ visited\ via\ the}}
+\DoxyCodeLine{00101\ \ \ \textcolor{comment}{//\ "{}typename\ TestFixture::"{}\ prefix.}}
+\DoxyCodeLine{00102\ \ \ \textcolor{keyword}{typename}\ TestFixture::Vector\ empty;}
+\DoxyCodeLine{00103\ \ \ EXPECT\_EQ(0U,\ empty.size());}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \textcolor{keyword}{typename}\ TestFixture::IntSet\ empty2;}
+\DoxyCodeLine{00106\ \ \ EXPECT\_EQ(0U,\ empty2.size());}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \textcolor{comment}{//\ Non-\/static\ members\ of\ the\ fixture\ class\ must\ be\ visited\ via}}
+\DoxyCodeLine{00109\ \ \ \textcolor{comment}{//\ 'this',\ as\ required\ by\ C++\ for\ class\ templates.}}
+\DoxyCodeLine{00110\ \ \ EXPECT\_EQ(2,\ this-\/>value\_);}
+\DoxyCodeLine{00111\ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{comment}{//\ The\ second\ test\ makes\ sure\ shared\_\ is\ not\ deleted\ after\ the\ first}}
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ test.}}
+\DoxyCodeLine{00115\ TYPED\_TEST(\mbox{\hyperlink{class_common_test}{CommonTest}},\ ValuesAreStillCorrect)\ \{}
+\DoxyCodeLine{00116\ \ \ \textcolor{comment}{//\ Static\ members\ of\ the\ fixture\ class\ template\ can\ also\ be\ visited}}
+\DoxyCodeLine{00117\ \ \ \textcolor{comment}{//\ via\ 'this'.}}
+\DoxyCodeLine{00118\ \ \ ASSERT\_TRUE(this-\/>shared\_\ !=\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00119\ \ \ EXPECT\_EQ(5,\ *this-\/>shared\_);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \textcolor{comment}{//\ TypeParam\ can\ be\ used\ to\ refer\ to\ the\ type\ parameter.}}
+\DoxyCodeLine{00122\ \ \ EXPECT\_EQ(\textcolor{keyword}{static\_cast<}TypeParam\textcolor{keyword}{>}(2),\ this-\/>value\_);}
+\DoxyCodeLine{00123\ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{comment}{//\ Tests\ that\ multiple\ TYPED\_TEST\_SUITE's\ can\ be\ defined\ in\ the\ same}}
+\DoxyCodeLine{00126\ \textcolor{comment}{//\ translation\ unit.}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00129\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_typed_test1}{TypedTest1}}\ :\ \textcolor{keyword}{public}\ Test\ \{\};}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{comment}{//\ Verifies\ that\ the\ second\ argument\ of\ TYPED\_TEST\_SUITE\ can\ be\ a}}
+\DoxyCodeLine{00132\ \textcolor{comment}{//\ single\ type.}}
+\DoxyCodeLine{00133\ TYPED\_TEST\_SUITE(\mbox{\hyperlink{class_typed_test1}{TypedTest1}},\ \textcolor{keywordtype}{int});}
+\DoxyCodeLine{00134\ TYPED\_TEST(\mbox{\hyperlink{class_typed_test1}{TypedTest1}},\ A)\ \{\}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00137\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_typed_test2}{TypedTest2}}\ :\ \textcolor{keyword}{public}\ Test\ \{\};}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{comment}{//\ Verifies\ that\ the\ second\ argument\ of\ TYPED\_TEST\_SUITE\ can\ be\ a}}
+\DoxyCodeLine{00140\ \textcolor{comment}{//\ Types<...>\ type\ list.}}
+\DoxyCodeLine{00141\ TYPED\_TEST\_SUITE(\mbox{\hyperlink{class_typed_test2}{TypedTest2}},\ Types<int>);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{comment}{//\ This\ also\ verifies\ that\ tests\ from\ different\ typed\ test\ cases\ can}}
+\DoxyCodeLine{00144\ \textcolor{comment}{//\ share\ the\ same\ name.}}
+\DoxyCodeLine{00145\ TYPED\_TEST(\mbox{\hyperlink{class_typed_test2}{TypedTest2}},\ A)\ \{\}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{//\ Tests\ that\ a\ typed\ test\ case\ can\ be\ defined\ in\ a\ namespace.}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{keyword}{namespace\ }library1\ \{}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00152\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classlibrary1_1_1_numeric_test}{NumericTest}}\ :\ \textcolor{keyword}{public}\ Test\ \{\};}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{keyword}{typedef}\ Types<int,\ long>\ NumericTypes;}
+\DoxyCodeLine{00155\ TYPED\_TEST\_SUITE(\mbox{\hyperlink{classlibrary1_1_1_numeric_test}{NumericTest}},\ NumericTypes);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ TYPED\_TEST(\mbox{\hyperlink{classlibrary1_1_1_numeric_test}{NumericTest}},\ DefaultIsZero)\ \{\ EXPECT\_EQ(0,\ TypeParam());\ \}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \}\ \ \textcolor{comment}{//\ namespace\ library1}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{comment}{//\ Tests\ that\ custom\ names\ work.}}
+\DoxyCodeLine{00162\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00163\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_typed_test_with_names}{TypedTestWithNames}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classtesting_1_1_test}{Test}}\ \{\};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_typed_test_names}{TypedTestNames}}\ \{}
+\DoxyCodeLine{00166\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00167\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00168\ \ \ \textcolor{keyword}{static}\ std::string\ GetName(\textcolor{keywordtype}{int}\ i)\ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::is\_same<T,\ char>::value)\ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(\textcolor{stringliteral}{"{}char"{}})\ +\ ::testing::PrintToString(i);}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::is\_same<T,\ int>::value)\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(\textcolor{stringliteral}{"{}int"{}})\ +\ ::testing::PrintToString(i);}
+\DoxyCodeLine{00174\ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \ \ \}}
+\DoxyCodeLine{00176\ \};}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ TYPED\_TEST\_SUITE(\mbox{\hyperlink{class_typed_test_with_names}{TypedTestWithNames}},\ TwoTypes,\ \mbox{\hyperlink{class_typed_test_names}{TypedTestNames}});}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ TYPED\_TEST(\mbox{\hyperlink{class_typed_test_with_names}{TypedTestWithNames}},\ TestSuiteName)\ \{}
+\DoxyCodeLine{00181\ \ \ \textcolor{keywordflow}{if}\ (std::is\_same<TypeParam,\ char>::value)\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ EXPECT\_STREQ(::testing::UnitTest::GetInstance()}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>current\_test\_info()}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>test\_suite\_name(),}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TypedTestWithNames/char0"{}});}
+\DoxyCodeLine{00186\ \ \ \}}
+\DoxyCodeLine{00187\ \ \ \textcolor{keywordflow}{if}\ (std::is\_same<TypeParam,\ int>::value)\ \{}
+\DoxyCodeLine{00188\ \ \ \ \ EXPECT\_STREQ(::testing::UnitTest::GetInstance()}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>current\_test\_info()}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>test\_suite\_name(),}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TypedTestWithNames/int1"{}});}
+\DoxyCodeLine{00192\ \ \ \}}
+\DoxyCodeLine{00193\ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \textcolor{keyword}{using\ }testing::Types;}
+\DoxyCodeLine{00196\ \textcolor{keyword}{using\ }testing::internal::TypedTestSuitePState;}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{comment}{//\ Tests\ TypedTestSuitePState.}}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_typed_test_suite_p_state_test}{TypedTestSuitePStateTest}}\ :\ \textcolor{keyword}{public}\ Test\ \{}
+\DoxyCodeLine{00201\ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00202\ \ \ \textcolor{keywordtype}{void}\ SetUp()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00203\ \ \ \ \ state\_.AddTestName(\textcolor{stringliteral}{"{}foo.cc"{}},\ 0,\ \textcolor{stringliteral}{"{}FooTest"{}},\ \textcolor{stringliteral}{"{}A"{}});}
+\DoxyCodeLine{00204\ \ \ \ \ state\_.AddTestName(\textcolor{stringliteral}{"{}foo.cc"{}},\ 0,\ \textcolor{stringliteral}{"{}FooTest"{}},\ \textcolor{stringliteral}{"{}B"{}});}
+\DoxyCodeLine{00205\ \ \ \ \ state\_.AddTestName(\textcolor{stringliteral}{"{}foo.cc"{}},\ 0,\ \textcolor{stringliteral}{"{}FooTest"{}},\ \textcolor{stringliteral}{"{}C"{}});}
+\DoxyCodeLine{00206\ \ \ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ TypedTestSuitePState\ state\_;}
+\DoxyCodeLine{00209\ \};}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ TEST\_F(\mbox{\hyperlink{class_typed_test_suite_p_state_test}{TypedTestSuitePStateTest}},\ SucceedsForMatchingList)\ \{}
+\DoxyCodeLine{00212\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ tests\ =\ \textcolor{stringliteral}{"{}A,\ B,\ C"{}};}
+\DoxyCodeLine{00213\ \ \ EXPECT\_EQ(tests,}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ state\_.VerifyRegisteredTestNames(\textcolor{stringliteral}{"{}Suite"{}},\ \textcolor{stringliteral}{"{}foo.cc"{}},\ 1,\ tests));}
+\DoxyCodeLine{00215\ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{comment}{//\ Makes\ sure\ that\ the\ order\ of\ the\ tests\ and\ spaces\ around\ the\ names}}
+\DoxyCodeLine{00218\ \textcolor{comment}{//\ don't\ matter.}}
+\DoxyCodeLine{00219\ TEST\_F(\mbox{\hyperlink{class_typed_test_suite_p_state_test}{TypedTestSuitePStateTest}},\ IgnoresOrderAndSpaces)\ \{}
+\DoxyCodeLine{00220\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ tests\ =\ \textcolor{stringliteral}{"{}A,C,\ \ \ B"{}};}
+\DoxyCodeLine{00221\ \ \ EXPECT\_EQ(tests,}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ state\_.VerifyRegisteredTestNames(\textcolor{stringliteral}{"{}Suite"{}},\ \textcolor{stringliteral}{"{}foo.cc"{}},\ 1,\ tests));}
+\DoxyCodeLine{00223\ \}}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \textcolor{keyword}{using\ }TypedTestSuitePStateDeathTest\ =\ \mbox{\hyperlink{class_typed_test_suite_p_state_test}{TypedTestSuitePStateTest}};}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ TEST\_F(TypedTestSuitePStateDeathTest,\ DetectsDuplicates)\ \{}
+\DoxyCodeLine{00228\ \ \ EXPECT\_DEATH\_IF\_SUPPORTED(}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ state\_.VerifyRegisteredTestNames(\textcolor{stringliteral}{"{}Suite"{}},\ \textcolor{stringliteral}{"{}foo.cc"{}},\ 1,\ \textcolor{stringliteral}{"{}A,\ B,\ A,\ C"{}}),}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}foo\(\backslash\)\(\backslash\).cc.1.?:\ Test\ A\ is\ listed\ more\ than\ once\(\backslash\)\(\backslash\)."{}});}
+\DoxyCodeLine{00231\ \}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ TEST\_F(TypedTestSuitePStateDeathTest,\ DetectsExtraTest)\ \{}
+\DoxyCodeLine{00234\ \ \ EXPECT\_DEATH\_IF\_SUPPORTED(}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ state\_.VerifyRegisteredTestNames(\textcolor{stringliteral}{"{}Suite"{}},\ \textcolor{stringliteral}{"{}foo.cc"{}},\ 1,\ \textcolor{stringliteral}{"{}A,\ B,\ C,\ D"{}}),}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}foo\(\backslash\)\(\backslash\).cc.1.?:\ No\ test\ named\ D\ can\ be\ found\ in\ this\ test\ suite\(\backslash\)\(\backslash\)."{}});}
+\DoxyCodeLine{00237\ \}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ TEST\_F(TypedTestSuitePStateDeathTest,\ DetectsMissedTest)\ \{}
+\DoxyCodeLine{00240\ \ \ EXPECT\_DEATH\_IF\_SUPPORTED(}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ state\_.VerifyRegisteredTestNames(\textcolor{stringliteral}{"{}Suite"{}},\ \textcolor{stringliteral}{"{}foo.cc"{}},\ 1,\ \textcolor{stringliteral}{"{}A,\ C"{}}),}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}foo\(\backslash\)\(\backslash\).cc.1.?:\ You\ forgot\ to\ list\ test\ B\(\backslash\)\(\backslash\)."{}});}
+\DoxyCodeLine{00243\ \}}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \textcolor{comment}{//\ Tests\ that\ defining\ a\ test\ for\ a\ parameterized\ test\ case\ generates}}
+\DoxyCodeLine{00246\ \textcolor{comment}{//\ a\ run-\/time\ error\ if\ the\ test\ case\ has\ been\ registered.}}
+\DoxyCodeLine{00247\ TEST\_F(TypedTestSuitePStateDeathTest,\ DetectsTestAfterRegistration)\ \{}
+\DoxyCodeLine{00248\ \ \ state\_.VerifyRegisteredTestNames(\textcolor{stringliteral}{"{}Suite"{}},\ \textcolor{stringliteral}{"{}foo.cc"{}},\ 1,\ \textcolor{stringliteral}{"{}A,\ B,\ C"{}});}
+\DoxyCodeLine{00249\ \ \ EXPECT\_DEATH\_IF\_SUPPORTED(}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ state\_.AddTestName(\textcolor{stringliteral}{"{}foo.cc"{}},\ 2,\ \textcolor{stringliteral}{"{}FooTest"{}},\ \textcolor{stringliteral}{"{}D"{}}),}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}foo\(\backslash\)\(\backslash\).cc.2.?:\ Test\ D\ must\ be\ defined\ before\ REGISTER\_TYPED\_TEST\_SUITE\_P"{}}}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)(FooTest,\ \(\backslash\)\(\backslash\).\(\backslash\)\(\backslash\).\(\backslash\)\(\backslash\).\(\backslash\)\(\backslash\))\(\backslash\)\(\backslash\)."{}});}
+\DoxyCodeLine{00253\ \}}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \textcolor{comment}{//\ Tests\ that\ SetUpTestSuite()/TearDownTestSuite(),\ fixture\ ctor/dtor,}}
+\DoxyCodeLine{00256\ \textcolor{comment}{//\ and\ SetUp()/TearDown()\ work\ correctly\ in\ type-\/parameterized\ tests.}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00259\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_derived_test}{DerivedTest}}\ :\ \textcolor{keyword}{public}\ CommonTest<T>\ \{\};}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{class_derived_test}{DerivedTest}});}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ TYPED\_TEST\_P(\mbox{\hyperlink{class_derived_test}{DerivedTest}},\ ValuesAreCorrect)\ \{}
+\DoxyCodeLine{00264\ \ \ \textcolor{comment}{//\ Static\ members\ of\ the\ fixture\ class\ template\ can\ be\ visited\ via}}
+\DoxyCodeLine{00265\ \ \ \textcolor{comment}{//\ the\ TestFixture::\ prefix.}}
+\DoxyCodeLine{00266\ \ \ EXPECT\_EQ(5,\ *TestFixture::shared\_);}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \textcolor{comment}{//\ Non-\/static\ members\ of\ the\ fixture\ class\ must\ be\ visited\ via}}
+\DoxyCodeLine{00269\ \ \ \textcolor{comment}{//\ 'this',\ as\ required\ by\ C++\ for\ class\ templates.}}
+\DoxyCodeLine{00270\ \ \ EXPECT\_EQ(2,\ this-\/>value\_);}
+\DoxyCodeLine{00271\ \}}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{comment}{//\ The\ second\ test\ makes\ sure\ shared\_\ is\ not\ deleted\ after\ the\ first}}
+\DoxyCodeLine{00274\ \textcolor{comment}{//\ test.}}
+\DoxyCodeLine{00275\ TYPED\_TEST\_P(\mbox{\hyperlink{class_derived_test}{DerivedTest}},\ ValuesAreStillCorrect)\ \{}
+\DoxyCodeLine{00276\ \ \ \textcolor{comment}{//\ Static\ members\ of\ the\ fixture\ class\ template\ can\ also\ be\ visited}}
+\DoxyCodeLine{00277\ \ \ \textcolor{comment}{//\ via\ 'this'.}}
+\DoxyCodeLine{00278\ \ \ ASSERT\_TRUE(this-\/>shared\_\ !=\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00279\ \ \ EXPECT\_EQ(5,\ *this-\/>shared\_);}
+\DoxyCodeLine{00280\ \ \ EXPECT\_EQ(2,\ this-\/>value\_);}
+\DoxyCodeLine{00281\ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ REGISTER\_TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{class_derived_test}{DerivedTest}},\ ValuesAreCorrect,}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ValuesAreStillCorrect);}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \textcolor{keyword}{typedef}\ Types<short,\ long>\ MyTwoTypes;}
+\DoxyCodeLine{00287\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P(My,\ \mbox{\hyperlink{class_derived_test}{DerivedTest}},\ MyTwoTypes);}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \textcolor{comment}{//\ Tests\ that\ custom\ names\ work\ with\ type\ parametrized\ tests.\ We\ reuse\ the}}
+\DoxyCodeLine{00290\ \textcolor{comment}{//\ TwoTypes\ from\ above\ here.}}
+\DoxyCodeLine{00291\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00292\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_type_parametrized_test_with_names}{TypeParametrizedTestWithNames}}\ :\ \textcolor{keyword}{public}\ Test\ \{\};}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{class_type_parametrized_test_with_names}{TypeParametrizedTestWithNames}});}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ TYPED\_TEST\_P(\mbox{\hyperlink{class_type_parametrized_test_with_names}{TypeParametrizedTestWithNames}},\ TestSuiteName)\ \{}
+\DoxyCodeLine{00297\ \ \ \textcolor{keywordflow}{if}\ (std::is\_same<TypeParam,\ char>::value)\ \{}
+\DoxyCodeLine{00298\ \ \ \ \ EXPECT\_STREQ(::testing::UnitTest::GetInstance()}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>current\_test\_info()}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>test\_suite\_name(),}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}CustomName/TypeParametrizedTestWithNames/parChar0"{}});}
+\DoxyCodeLine{00302\ \ \ \}}
+\DoxyCodeLine{00303\ \ \ \textcolor{keywordflow}{if}\ (std::is\_same<TypeParam,\ int>::value)\ \{}
+\DoxyCodeLine{00304\ \ \ \ \ EXPECT\_STREQ(::testing::UnitTest::GetInstance()}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>current\_test\_info()}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>test\_suite\_name(),}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}CustomName/TypeParametrizedTestWithNames/parInt1"{}});}
+\DoxyCodeLine{00308\ \ \ \}}
+\DoxyCodeLine{00309\ \}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ REGISTER\_TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{class_type_parametrized_test_with_names}{TypeParametrizedTestWithNames}},\ TestSuiteName);}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_type_parametrized_test_names}{TypeParametrizedTestNames}}\ \{}
+\DoxyCodeLine{00314\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00315\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00316\ \ \ \textcolor{keyword}{static}\ std::string\ GetName(\textcolor{keywordtype}{int}\ i)\ \{}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::is\_same<T,\ char>::value)\ \{}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(\textcolor{stringliteral}{"{}parChar"{}})\ +\ ::testing::PrintToString(i);}
+\DoxyCodeLine{00319\ \ \ \ \ \}}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::is\_same<T,\ int>::value)\ \{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(\textcolor{stringliteral}{"{}parInt"{}})\ +\ ::testing::PrintToString(i);}
+\DoxyCodeLine{00322\ \ \ \ \ \}}
+\DoxyCodeLine{00323\ \ \ \}}
+\DoxyCodeLine{00324\ \};}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P(CustomName,\ \mbox{\hyperlink{class_type_parametrized_test_with_names}{TypeParametrizedTestWithNames}},}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TwoTypes,\ \mbox{\hyperlink{class_type_parametrized_test_names}{TypeParametrizedTestNames}});}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \textcolor{comment}{//\ Tests\ that\ multiple\ TYPED\_TEST\_SUITE\_P's\ can\ be\ defined\ in\ the\ same}}
+\DoxyCodeLine{00330\ \textcolor{comment}{//\ translation\ unit.}}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00332\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00333\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_typed_test_p1}{TypedTestP1}}\ :\ \textcolor{keyword}{public}\ Test\ \{\};}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{class_typed_test_p1}{TypedTestP1}});}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \textcolor{comment}{//\ For\ testing\ that\ the\ code\ between\ TYPED\_TEST\_SUITE\_P()\ and}}
+\DoxyCodeLine{00338\ \textcolor{comment}{//\ TYPED\_TEST\_P()\ is\ not\ enclosed\ in\ a\ namespace.}}
+\DoxyCodeLine{00339\ \textcolor{keyword}{using\ }IntAfterTypedTestSuiteP\ =\ int;}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ TYPED\_TEST\_P(\mbox{\hyperlink{class_typed_test_p1}{TypedTestP1}},\ A)\ \{\}}
+\DoxyCodeLine{00342\ TYPED\_TEST\_P(\mbox{\hyperlink{class_typed_test_p1}{TypedTestP1}},\ B)\ \{\}}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \textcolor{comment}{//\ For\ testing\ that\ the\ code\ between\ TYPED\_TEST\_P()\ and}}
+\DoxyCodeLine{00345\ \textcolor{comment}{//\ REGISTER\_TYPED\_TEST\_SUITE\_P()\ is\ not\ enclosed\ in\ a\ namespace.}}
+\DoxyCodeLine{00346\ \textcolor{keyword}{using\ }IntBeforeRegisterTypedTestSuiteP\ =\ int;}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ REGISTER\_TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{class_typed_test_p1}{TypedTestP1}},\ A,\ B);}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00351\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_typed_test_p2}{TypedTestP2}}\ :\ \textcolor{keyword}{public}\ Test\ \{\};}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{class_typed_test_p2}{TypedTestP2}});}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \textcolor{comment}{//\ This\ also\ verifies\ that\ tests\ from\ different\ type-\/parameterized}}
+\DoxyCodeLine{00356\ \textcolor{comment}{//\ test\ cases\ can\ share\ the\ same\ name.}}
+\DoxyCodeLine{00357\ TYPED\_TEST\_P(\mbox{\hyperlink{class_typed_test_p2}{TypedTestP2}},\ A)\ \{\}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ REGISTER\_TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{class_typed_test_p2}{TypedTestP2}},\ A);}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \textcolor{comment}{//\ Verifies\ that\ the\ code\ between\ TYPED\_TEST\_SUITE\_P()\ and}}
+\DoxyCodeLine{00362\ \textcolor{comment}{//\ REGISTER\_TYPED\_TEST\_SUITE\_P()\ is\ not\ enclosed\ in\ a\ namespace.}}
+\DoxyCodeLine{00363\ IntAfterTypedTestSuiteP\ after\ =\ 0;}
+\DoxyCodeLine{00364\ IntBeforeRegisterTypedTestSuiteP\ before\ =\ 0;}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \textcolor{comment}{//\ Verifies\ that\ the\ last\ argument\ of\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P()}}
+\DoxyCodeLine{00367\ \textcolor{comment}{//\ can\ be\ either\ a\ single\ type\ or\ a\ Types<...>\ type\ list.}}
+\DoxyCodeLine{00368\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P(Int,\ \mbox{\hyperlink{class_typed_test_p1}{TypedTestP1}},\ \textcolor{keywordtype}{int});}
+\DoxyCodeLine{00369\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P(Int,\ \mbox{\hyperlink{class_typed_test_p2}{TypedTestP2}},\ Types<int>);}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \textcolor{comment}{//\ Tests\ that\ the\ same\ type-\/parameterized\ test\ case\ can\ be}}
+\DoxyCodeLine{00372\ \textcolor{comment}{//\ instantiated\ more\ than\ once\ in\ the\ same\ translation\ unit.}}
+\DoxyCodeLine{00373\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P(Double,\ \mbox{\hyperlink{class_typed_test_p2}{TypedTestP2}},\ Types<double>);}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \textcolor{comment}{//\ Tests\ that\ the\ same\ type-\/parameterized\ test\ case\ can\ be}}
+\DoxyCodeLine{00376\ \textcolor{comment}{//\ instantiated\ in\ different\ translation\ units\ linked\ together.}}
+\DoxyCodeLine{00377\ \textcolor{comment}{//\ (ContainerTest\ is\ also\ instantiated\ in\ gtest-\/typed-\/test\_test.cc.)}}
+\DoxyCodeLine{00378\ \textcolor{keyword}{typedef}\ Types<std::vector<double>,\ std::set<char>\ >\ MyContainers;}
+\DoxyCodeLine{00379\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P(My,\ \mbox{\hyperlink{class_container_test}{ContainerTest}},\ MyContainers);}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \textcolor{comment}{//\ Tests\ that\ a\ type-\/parameterized\ test\ case\ can\ be\ defined\ and}}
+\DoxyCodeLine{00382\ \textcolor{comment}{//\ instantiated\ in\ a\ namespace.}}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00384\ \textcolor{keyword}{namespace\ }library2\ \{}
+\DoxyCodeLine{00385\ }
+\DoxyCodeLine{00386\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00387\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classlibrary2_1_1_numeric_test}{NumericTest}}\ :\ \textcolor{keyword}{public}\ Test\ \{\};}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{classlibrary2_1_1_numeric_test}{NumericTest}});}
+\DoxyCodeLine{00390\ }
+\DoxyCodeLine{00391\ TYPED\_TEST\_P(\mbox{\hyperlink{classlibrary2_1_1_numeric_test}{NumericTest}},\ DefaultIsZero)\ \{\ EXPECT\_EQ(0,\ TypeParam());\ \}}
+\DoxyCodeLine{00392\ }
+\DoxyCodeLine{00393\ TYPED\_TEST\_P(NumericTest,\ ZeroIsLessThanOne)\ \{}
+\DoxyCodeLine{00394\ \ \ EXPECT\_LT(TypeParam(0),\ TypeParam(1));}
+\DoxyCodeLine{00395\ \}}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00397\ REGISTER\_TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{classlibrary2_1_1_numeric_test}{NumericTest}},\ DefaultIsZero,\ ZeroIsLessThanOne);}
+\DoxyCodeLine{00398\ \textcolor{keyword}{typedef}\ Types<int,\ double>\ NumericTypes;}
+\DoxyCodeLine{00399\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P(My,\ \mbox{\hyperlink{classlibrary2_1_1_numeric_test}{NumericTest}},\ NumericTypes);}
+\DoxyCodeLine{00400\ }
+\DoxyCodeLine{00401\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ GetTestName()\ \{}
+\DoxyCodeLine{00402\ \ \ \textcolor{keywordflow}{return}\ testing::UnitTest::GetInstance()-\/>current\_test\_info()-\/>name();}
+\DoxyCodeLine{00403\ \}}
+\DoxyCodeLine{00404\ \textcolor{comment}{//\ Test\ the\ stripping\ of\ space\ from\ test\ names}}
+\DoxyCodeLine{00405\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00406\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classlibrary2_1_1_trimmed_test}{TrimmedTest}}\ :\ \textcolor{keyword}{public}\ Test\ \{\};}
+\DoxyCodeLine{00407\ TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{classlibrary2_1_1_trimmed_test}{TrimmedTest}});}
+\DoxyCodeLine{00408\ TYPED\_TEST\_P(\mbox{\hyperlink{classlibrary2_1_1_trimmed_test}{TrimmedTest}},\ Test1)\ \{\ EXPECT\_STREQ(\textcolor{stringliteral}{"{}Test1"{}},\ GetTestName());\ \}}
+\DoxyCodeLine{00409\ TYPED\_TEST\_P(TrimmedTest,\ Test2)\ \{\ EXPECT\_STREQ(\textcolor{stringliteral}{"{}Test2"{}},\ GetTestName());\ \}}
+\DoxyCodeLine{00410\ TYPED\_TEST\_P(\mbox{\hyperlink{classlibrary2_1_1_trimmed_test}{TrimmedTest}},\ Test3)\ \{\ EXPECT\_STREQ(\textcolor{stringliteral}{"{}Test3"{}},\ GetTestName());\ \}}
+\DoxyCodeLine{00411\ TYPED\_TEST\_P(\mbox{\hyperlink{classlibrary2_1_1_trimmed_test}{TrimmedTest}},\ Test4)\ \{\ EXPECT\_STREQ(\textcolor{stringliteral}{"{}Test4"{}},\ GetTestName());\ \}}
+\DoxyCodeLine{00412\ TYPED\_TEST\_P(\mbox{\hyperlink{classlibrary2_1_1_trimmed_test}{TrimmedTest}},\ Test5)\ \{\ EXPECT\_STREQ(\textcolor{stringliteral}{"{}Test5"{}},\ GetTestName());\ \}}
+\DoxyCodeLine{00413\ REGISTER\_TYPED\_TEST\_SUITE\_P(\mbox{\hyperlink{classlibrary2_1_1_trimmed_test}{TrimmedTest}},\ Test1,\ Test2,\ Test3,\ Test4,}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Test5);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00415\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T1,\ \textcolor{keyword}{typename}\ T2>}
+\DoxyCodeLine{00416\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structlibrary2_1_1_my_pair}{MyPair}}\ \{\};}
+\DoxyCodeLine{00417\ \textcolor{comment}{//\ Be\ sure\ to\ try\ a\ type\ with\ a\ comma\ in\ its\ name\ just\ in\ case\ it\ matters.}}
+\DoxyCodeLine{00418\ \textcolor{keyword}{typedef}\ Types<int,\ double,\ MyPair<int,\ int>\ >\ TrimTypes;}
+\DoxyCodeLine{00419\ INSTANTIATE\_TYPED\_TEST\_SUITE\_P(My,\ \mbox{\hyperlink{classlibrary2_1_1_trimmed_test}{TrimmedTest}},\ TrimTypes);}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00421\ \}\ \ \textcolor{comment}{//\ namespace\ library2}}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00423\ GTEST\_DISABLE\_MSC\_WARNINGS\_POP\_()\ \ \textcolor{comment}{//\ 4127}}
+
+\end{DoxyCode}

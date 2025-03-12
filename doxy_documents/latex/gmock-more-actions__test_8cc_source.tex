@@ -1,0 +1,1594 @@
+\doxysection{gmock-\/more-\/actions\+\_\+test.cc}
+\hypertarget{gmock-more-actions__test_8cc_source}{}\label{gmock-more-actions__test_8cc_source}\index{/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/subprojects/googletest-\/1.15.2/googlemock/test/gmock-\/more-\/actions\_test.cc@{/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/subprojects/googletest-\/1.15.2/googlemock/test/gmock-\/more-\/actions\_test.cc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ 2007,\ Google\ Inc.}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ All\ rights\ reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Redistribution\ and\ use\ in\ source\ and\ binary\ forms,\ with\ or\ without}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ modification,\ are\ permitted\ provided\ that\ the\ following\ conditions\ are}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ met:}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ \ \ \ \ *\ Redistributions\ of\ source\ code\ must\ retain\ the\ above\ copyright}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ \ \ \ \ *\ Redistributions\ in\ binary\ form\ must\ reproduce\ the\ above}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ copyright\ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ in\ the\ documentation\ and/or\ other\ materials\ provided\ with\ the}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ \ \ \ \ *\ Neither\ the\ name\ of\ Google\ Inc.\ nor\ the\ names\ of\ its}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ contributors\ may\ be\ used\ to\ endorse\ or\ promote\ products\ derived\ from}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ this\ software\ without\ specific\ prior\ written\ permission.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ THE\ COPYRIGHT\ HOLDERS\ AND\ CONTRIBUTORS}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ "{}AS\ IS"{}\ AND\ ANY\ EXPRESS\ OR\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ LIMITED\ TO,\ THE\ IMPLIED\ WARRANTIES\ OF\ MERCHANTABILITY\ AND\ FITNESS\ FOR}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ A\ PARTICULAR\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO\ EVENT\ SHALL\ THE\ COPYRIGHT}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ OWNER\ OR\ CONTRIBUTORS\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ SPECIAL,\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ LIMITED\ TO,\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ DATA,\ OR\ PROFITS;\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ THEORY\ OF\ LIABILITY,\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ (INCLUDING\ NEGLIGENCE\ OR\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ OF\ THIS\ SOFTWARE,\ EVEN\ IF\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ Google\ Mock\ -\/\ a\ framework\ for\ writing\ C++\ mock\ classes.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//}}
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ This\ file\ tests\ the\ built-\/in\ actions\ in\ gmock-\/actions.h.}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ "{}gmock/gmock-\/more-\/actions.h"{}}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <iterator>}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#include\ <tuple>}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#include\ "{}gmock/gmock.h"{}}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#include\ "{}gtest/gtest-\/spi.h"{}}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#include\ "{}gtest/gtest.h"{}}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ GTEST\_DISABLE\_MSC\_WARNINGS\_PUSH\_(4577)}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ namespace\ testing\ \{}
+\DoxyCodeLine{00052\ \textcolor{keyword}{namespace\ }gmock\_more\_actions\_test\ \{}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keyword}{using\ }::std::plus;}
+\DoxyCodeLine{00055\ \textcolor{keyword}{using\ }::std::string;}
+\DoxyCodeLine{00056\ \textcolor{keyword}{using\ }testing::Action;}
+\DoxyCodeLine{00057\ \textcolor{keyword}{using\ }testing::DeleteArg;}
+\DoxyCodeLine{00058\ \textcolor{keyword}{using\ }testing::Invoke;}
+\DoxyCodeLine{00059\ \textcolor{keyword}{using\ }testing::ReturnArg;}
+\DoxyCodeLine{00060\ \textcolor{keyword}{using\ }testing::ReturnPointee;}
+\DoxyCodeLine{00061\ \textcolor{keyword}{using\ }testing::SaveArg;}
+\DoxyCodeLine{00062\ \textcolor{keyword}{using\ }testing::SaveArgPointee;}
+\DoxyCodeLine{00063\ \textcolor{keyword}{using\ }testing::SetArgReferee;}
+\DoxyCodeLine{00064\ \textcolor{keyword}{using\ }testing::Unused;}
+\DoxyCodeLine{00065\ \textcolor{keyword}{using\ }testing::WithArg;}
+\DoxyCodeLine{00066\ \textcolor{keyword}{using\ }testing::WithoutArgs;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{comment}{//\ For\ suppressing\ compiler\ warnings\ on\ conversion\ possibly\ losing\ precision.}}
+\DoxyCodeLine{00069\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{short}\ Short(\textcolor{keywordtype}{short}\ n)\ \{\ \textcolor{keywordflow}{return}\ n;\ \}\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00070\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{char}\ Char(\textcolor{keywordtype}{char}\ ch)\ \{\ \textcolor{keywordflow}{return}\ ch;\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{comment}{//\ Sample\ functions\ and\ functors\ for\ testing\ Invoke()\ and\ etc.}}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{int}\ Nullary()\ \{\ \textcolor{keywordflow}{return}\ 1;\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{bool}\ g\_done\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{bool}\ Unary(\textcolor{keywordtype}{int}\ x)\ \{\ \textcolor{keywordflow}{return}\ x\ <\ 0;\ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{bool}\ ByConstRef(\textcolor{keyword}{const}\ std::string\&\ s)\ \{\ \textcolor{keywordflow}{return}\ s\ ==\ \textcolor{stringliteral}{"{}Hi"{}};\ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ g\_double\ =\ 0;}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{bool}\ ReferencesGlobalDouble(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ x)\ \{\ \textcolor{keywordflow}{return}\ \&x\ ==\ \&g\_double;\ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtesting_1_1gmock__more__actions__test_1_1_unary_functor}{UnaryFunctor}}\ \{}
+\DoxyCodeLine{00085\ \ \ \textcolor{keywordtype}{int}\ operator()(\textcolor{keywordtype}{bool}\ x)\ \{\ \textcolor{keywordflow}{return}\ x\ ?\ 1\ :\ -\/1;\ \}}
+\DoxyCodeLine{00086\ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{struct\ }UnaryMoveOnlyFunctor\ :\ \mbox{\hyperlink{structtesting_1_1gmock__more__actions__test_1_1_unary_functor}{UnaryFunctor}}\ \{}
+\DoxyCodeLine{00089\ \ \ UnaryMoveOnlyFunctor()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00090\ \ \ UnaryMoveOnlyFunctor(\textcolor{keyword}{const}\ UnaryMoveOnlyFunctor\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00091\ \ \ UnaryMoveOnlyFunctor(UnaryMoveOnlyFunctor\&\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00092\ \};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtesting_1_1gmock__more__actions__test_1_1_one_shot_unary_functor}{OneShotUnaryFunctor}}\ \{}
+\DoxyCodeLine{00095\ \ \ \textcolor{keywordtype}{int}\ operator()(\textcolor{keywordtype}{bool}\ x)\ \&\&\ \{\ \textcolor{keywordflow}{return}\ x\ ?\ 1\ :\ -\/1;\ \}}
+\DoxyCodeLine{00096\ \};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ Binary(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ input,\ \textcolor{keywordtype}{short}\ n)\ \{\ \textcolor{keywordflow}{return}\ input\ +\ n;\ \}\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{int}\ Ternary(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{char}\ y,\ \textcolor{keywordtype}{short}\ z)\ \{\ \textcolor{keywordflow}{return}\ x\ +\ y\ +\ z;\ \}\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{int}\ SumOf4(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ d)\ \{\ \textcolor{keywordflow}{return}\ a\ +\ b\ +\ c\ +\ d;\ \}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{int}\ SumOfFirst2(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ Unused,\ Unused)\ \{\ \textcolor{keywordflow}{return}\ a\ +\ b;\ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{int}\ SumOf5(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ d,\ \textcolor{keywordtype}{int}\ e)\ \{\ \textcolor{keywordflow}{return}\ a\ +\ b\ +\ c\ +\ d\ +\ e;\ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtesting_1_1gmock__more__actions__test_1_1_sum_of5_functor}{SumOf5Functor}}\ \{}
+\DoxyCodeLine{00109\ \ \ \textcolor{keywordtype}{int}\ operator()(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ d,\ \textcolor{keywordtype}{int}\ e)\ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{return}\ a\ +\ b\ +\ c\ +\ d\ +\ e;}
+\DoxyCodeLine{00111\ \ \ \}}
+\DoxyCodeLine{00112\ \};}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{keywordtype}{int}\ SumOf6(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ d,\ \textcolor{keywordtype}{int}\ e,\ \textcolor{keywordtype}{int}\ f)\ \{}
+\DoxyCodeLine{00115\ \ \ \textcolor{keywordflow}{return}\ a\ +\ b\ +\ c\ +\ d\ +\ e\ +\ f;}
+\DoxyCodeLine{00116\ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtesting_1_1gmock__more__actions__test_1_1_sum_of6_functor}{SumOf6Functor}}\ \{}
+\DoxyCodeLine{00119\ \ \ \textcolor{keywordtype}{int}\ operator()(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ d,\ \textcolor{keywordtype}{int}\ e,\ \textcolor{keywordtype}{int}\ f)\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{return}\ a\ +\ b\ +\ c\ +\ d\ +\ e\ +\ f;}
+\DoxyCodeLine{00121\ \ \ \}}
+\DoxyCodeLine{00122\ \};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ std::string\ Concat7(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s3,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s4,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s5,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s6,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s7)\ \{}
+\DoxyCodeLine{00127\ \ \ \textcolor{keywordflow}{return}\ std::string(s1)\ +\ s2\ +\ s3\ +\ s4\ +\ s5\ +\ s6\ +\ s7;}
+\DoxyCodeLine{00128\ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ std::string\ Concat8(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s3,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s4,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s5,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s6,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s7,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s8)\ \{}
+\DoxyCodeLine{00133\ \ \ \textcolor{keywordflow}{return}\ std::string(s1)\ +\ s2\ +\ s3\ +\ s4\ +\ s5\ +\ s6\ +\ s7\ +\ s8;}
+\DoxyCodeLine{00134\ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ std::string\ Concat9(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s3,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s4,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s5,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s6,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s7,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s8,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s9)\ \{}
+\DoxyCodeLine{00139\ \ \ \textcolor{keywordflow}{return}\ std::string(s1)\ +\ s2\ +\ s3\ +\ s4\ +\ s5\ +\ s6\ +\ s7\ +\ s8\ +\ s9;}
+\DoxyCodeLine{00140\ \}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ std::string\ Concat10(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s3,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s4,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s5,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s6,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s7,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s8,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s9,}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s10)\ \{}
+\DoxyCodeLine{00146\ \ \ \textcolor{keywordflow}{return}\ std::string(s1)\ +\ s2\ +\ s3\ +\ s4\ +\ s5\ +\ s6\ +\ s7\ +\ s8\ +\ s9\ +\ s10;}
+\DoxyCodeLine{00147\ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{keyword}{class\ }Foo\ \{}
+\DoxyCodeLine{00150\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00151\ \ \ Foo()\ :\ value\_(123)\ \{\}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \textcolor{keywordtype}{int}\ Nullary()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ value\_;\ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \textcolor{keywordtype}{short}\ Unary(\textcolor{keywordtype}{long}\ x)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{short}\textcolor{keyword}{>}(value\_\ +\ x);\ \}\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ std::string\ Binary(\textcolor{keyword}{const}\ std::string\&\ str,\ \textcolor{keywordtype}{char}\ c)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ str\ +\ c;\ \}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \textcolor{keywordtype}{int}\ Ternary(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{bool}\ y,\ \textcolor{keywordtype}{char}\ z)\ \{\ \textcolor{keywordflow}{return}\ value\_\ +\ x\ +\ y\ *\ z;\ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \textcolor{keywordtype}{int}\ SumOf4(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ d)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordflow}{return}\ a\ +\ b\ +\ c\ +\ d\ +\ value\_;}
+\DoxyCodeLine{00163\ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \textcolor{keywordtype}{int}\ SumOfLast2(Unused,\ Unused,\ \textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ a\ +\ b;\ \}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \textcolor{keywordtype}{int}\ SumOf5(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ d,\ \textcolor{keywordtype}{int}\ e)\ \{\ \textcolor{keywordflow}{return}\ a\ +\ b\ +\ c\ +\ d\ +\ e;\ \}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \textcolor{keywordtype}{int}\ SumOf6(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ d,\ \textcolor{keywordtype}{int}\ e,\ \textcolor{keywordtype}{int}\ f)\ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordflow}{return}\ a\ +\ b\ +\ c\ +\ d\ +\ e\ +\ f;}
+\DoxyCodeLine{00171\ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ std::string\ Concat7(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s3,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s4,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s5,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s6,}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s7)\ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(s1)\ +\ s2\ +\ s3\ +\ s4\ +\ s5\ +\ s6\ +\ s7;}
+\DoxyCodeLine{00177\ \ \ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ std::string\ Concat8(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s3,}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s4,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s5,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s6,}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s7,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s8)\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(s1)\ +\ s2\ +\ s3\ +\ s4\ +\ s5\ +\ s6\ +\ s7\ +\ s8;}
+\DoxyCodeLine{00183\ \ \ \}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ std::string\ Concat9(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s3,}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s4,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s5,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s6,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s7,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s8,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s9)\ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(s1)\ +\ s2\ +\ s3\ +\ s4\ +\ s5\ +\ s6\ +\ s7\ +\ s8\ +\ s9;}
+\DoxyCodeLine{00189\ \ \ \}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ std::string\ Concat10(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s3,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s4,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s5,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s6,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s7,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s8,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s9,}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s10)\ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(s1)\ +\ s2\ +\ s3\ +\ s4\ +\ s5\ +\ s6\ +\ s7\ +\ s8\ +\ s9\ +\ s10;}
+\DoxyCodeLine{00196\ \ \ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00199\ \ \ \textcolor{keywordtype}{int}\ value\_;}
+\DoxyCodeLine{00200\ \};}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ nullary\ function.}}
+\DoxyCodeLine{00203\ TEST(InvokeTest,\ Nullary)\ \{}
+\DoxyCodeLine{00204\ \ \ \mbox{\hyperlink{classtesting_1_1_action}{Action}}<int()>\ a\ =\ Invoke(Nullary);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00205\ \ \ EXPECT\_EQ(1,\ a.Perform(std::make\_tuple()));}
+\DoxyCodeLine{00206\ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ unary\ function.}}
+\DoxyCodeLine{00209\ TEST(InvokeTest,\ Unary)\ \{}
+\DoxyCodeLine{00210\ \ \ \mbox{\hyperlink{classtesting_1_1_action}{Action}}<bool(\textcolor{keywordtype}{int})>\ a\ =\ Invoke(Unary);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00211\ \ \ EXPECT\_FALSE(a.Perform(std::make\_tuple(1)));}
+\DoxyCodeLine{00212\ \ \ EXPECT\_TRUE(a.Perform(std::make\_tuple(-\/1)));}
+\DoxyCodeLine{00213\ \}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ binary\ function.}}
+\DoxyCodeLine{00216\ TEST(InvokeTest,\ Binary)\ \{}
+\DoxyCodeLine{00217\ \ \ \mbox{\hyperlink{classtesting_1_1gmock__more__actions__test_1_1_action}{Action}}<\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ short)>\ a\ =\ Invoke(Binary);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00218\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ p\ =\ \textcolor{stringliteral}{"{}Hello"{}};}
+\DoxyCodeLine{00219\ \ \ EXPECT\_EQ(p\ +\ 2,\ a.Perform(std::make\_tuple(p,\ Short(2))));}
+\DoxyCodeLine{00220\ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ ternary\ function.}}
+\DoxyCodeLine{00223\ TEST(InvokeTest,\ Ternary)\ \{}
+\DoxyCodeLine{00224\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{char},\ \textcolor{keywordtype}{short})>\ a\ =\ Invoke(Ternary);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00225\ \ \ EXPECT\_EQ(6,\ a.Perform(std::make\_tuple(1,\ \textcolor{charliteral}{'\(\backslash\)2'},\ Short(3))));}
+\DoxyCodeLine{00226\ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 4-\/argument\ function.}}
+\DoxyCodeLine{00229\ TEST(InvokeTest,\ FunctionThatTakes4Arguments)\ \{}
+\DoxyCodeLine{00230\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a\ =\ Invoke(SumOf4);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00231\ \ \ EXPECT\_EQ(1234,\ a.Perform(std::make\_tuple(1000,\ 200,\ 30,\ 4)));}
+\DoxyCodeLine{00232\ \}}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 5-\/argument\ function.}}
+\DoxyCodeLine{00235\ TEST(InvokeTest,\ FunctionThatTakes5Arguments)\ \{}
+\DoxyCodeLine{00236\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a\ =\ Invoke(SumOf5);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00237\ \ \ EXPECT\_EQ(12345,\ a.Perform(std::make\_tuple(10000,\ 2000,\ 300,\ 40,\ 5)));}
+\DoxyCodeLine{00238\ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 6-\/argument\ function.}}
+\DoxyCodeLine{00241\ TEST(InvokeTest,\ FunctionThatTakes6Arguments)\ \{}
+\DoxyCodeLine{00242\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a\ =\ Invoke(SumOf6);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00243\ \ \ EXPECT\_EQ(123456,}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ a.Perform(std::make\_tuple(100000,\ 20000,\ 3000,\ 400,\ 50,\ 6)));}
+\DoxyCodeLine{00245\ \}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \textcolor{comment}{//\ A\ helper\ that\ turns\ the\ type\ of\ a\ C-\/string\ literal\ from\ const}}
+\DoxyCodeLine{00248\ \textcolor{comment}{//\ char[N]\ to\ const\ char*.}}
+\DoxyCodeLine{00249\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ CharPtr(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s)\ \{\ \textcolor{keywordflow}{return}\ s;\ \}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 7-\/argument\ function.}}
+\DoxyCodeLine{00252\ TEST(InvokeTest,\ FunctionThatTakes7Arguments)\ \{}
+\DoxyCodeLine{00253\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ a\ =\ Invoke(Concat7);}
+\DoxyCodeLine{00256\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}1234567"{}},}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ a.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}1"{}}),\ CharPtr(\textcolor{stringliteral}{"{}2"{}}),\ CharPtr(\textcolor{stringliteral}{"{}3"{}}),}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}4"{}}),\ CharPtr(\textcolor{stringliteral}{"{}5"{}}),\ CharPtr(\textcolor{stringliteral}{"{}6"{}}),}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}7"{}}))));}
+\DoxyCodeLine{00260\ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 8-\/argument\ function.}}
+\DoxyCodeLine{00263\ TEST(InvokeTest,\ FunctionThatTakes8Arguments)\ \{}
+\DoxyCodeLine{00264\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ a\ =\ Invoke(Concat8);}
+\DoxyCodeLine{00267\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}12345678"{}},}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ a.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}1"{}}),\ CharPtr(\textcolor{stringliteral}{"{}2"{}}),\ CharPtr(\textcolor{stringliteral}{"{}3"{}}),}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}4"{}}),\ CharPtr(\textcolor{stringliteral}{"{}5"{}}),\ CharPtr(\textcolor{stringliteral}{"{}6"{}}),}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}7"{}}),\ CharPtr(\textcolor{stringliteral}{"{}8"{}}))));}
+\DoxyCodeLine{00271\ \}}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 9-\/argument\ function.}}
+\DoxyCodeLine{00274\ TEST(InvokeTest,\ FunctionThatTakes9Arguments)\ \{}
+\DoxyCodeLine{00275\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ a\ =\ Invoke(Concat9);}
+\DoxyCodeLine{00279\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}123456789"{}},\ a.Perform(std::make\_tuple(}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}1"{}}),\ CharPtr(\textcolor{stringliteral}{"{}2"{}}),\ CharPtr(\textcolor{stringliteral}{"{}3"{}}),}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}4"{}}),\ CharPtr(\textcolor{stringliteral}{"{}5"{}}),\ CharPtr(\textcolor{stringliteral}{"{}6"{}}),}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}7"{}}),\ CharPtr(\textcolor{stringliteral}{"{}8"{}}),\ CharPtr(\textcolor{stringliteral}{"{}9"{}}))));}
+\DoxyCodeLine{00283\ \}}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 10-\/argument\ function.}}
+\DoxyCodeLine{00286\ TEST(InvokeTest,\ FunctionThatTakes10Arguments)\ \{}
+\DoxyCodeLine{00287\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ a\ =\ Invoke(Concat10);}
+\DoxyCodeLine{00291\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}1234567890"{}},}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ a.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}1"{}}),\ CharPtr(\textcolor{stringliteral}{"{}2"{}}),\ CharPtr(\textcolor{stringliteral}{"{}3"{}}),}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}4"{}}),\ CharPtr(\textcolor{stringliteral}{"{}5"{}}),\ CharPtr(\textcolor{stringliteral}{"{}6"{}}),}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}7"{}}),\ CharPtr(\textcolor{stringliteral}{"{}8"{}}),\ CharPtr(\textcolor{stringliteral}{"{}9"{}}),}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}0"{}}))));}
+\DoxyCodeLine{00296\ \}}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ functions\ with\ parameters\ declared\ as\ Unused.}}
+\DoxyCodeLine{00299\ TEST(InvokeTest,\ FunctionWithUnusedParameters)\ \{}
+\DoxyCodeLine{00300\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{double},\ \textcolor{keyword}{const}\ std::string\&)>\ a1\ =\ Invoke(SumOfFirst2);}
+\DoxyCodeLine{00301\ \ \ std::tuple<int,\ int,\ double,\ std::string>\ dummy\ =}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ std::make\_tuple(10,\ 2,\ 5.6,\ std::string(\textcolor{stringliteral}{"{}hi"{}}));}
+\DoxyCodeLine{00303\ \ \ EXPECT\_EQ(12,\ a1.Perform(dummy));}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int}*)>\ a2\ =\ Invoke(SumOfFirst2);}
+\DoxyCodeLine{00306\ \ \ EXPECT\_EQ(}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ 23,\ a2.Perform(std::make\_tuple(20,\ 3,\ \textcolor{keyword}{true},\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}*\textcolor{keyword}{>}(\textcolor{keyword}{nullptr}))));}
+\DoxyCodeLine{00308\ \}}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ methods\ with\ parameters\ declared\ as\ Unused.}}
+\DoxyCodeLine{00311\ TEST(InvokeTest,\ MethodWithUnusedParameters)\ \{}
+\DoxyCodeLine{00312\ \ \ Foo\ foo;}
+\DoxyCodeLine{00313\ \ \ Action<int(std::string,\ \textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a1\ =\ Invoke(\&foo,\ \&Foo::SumOfLast2);}
+\DoxyCodeLine{00314\ \ \ EXPECT\_EQ(12,\ a1.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}hi"{}}),\ \textcolor{keyword}{true},\ 10,\ 2)));}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ Action<int(\textcolor{keywordtype}{char},\ \textcolor{keywordtype}{double},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a2\ =\ Invoke(\&foo,\ \&Foo::SumOfLast2);}
+\DoxyCodeLine{00317\ \ \ EXPECT\_EQ(23,\ a2.Perform(std::make\_tuple(\textcolor{charliteral}{'a'},\ 2.5,\ 20,\ 3)));}
+\DoxyCodeLine{00318\ \}}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00320\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ functor.}}
+\DoxyCodeLine{00321\ TEST(InvokeTest,\ Functor)\ \{}
+\DoxyCodeLine{00322\ \ \ Action<long(\textcolor{keywordtype}{long},\ \textcolor{keywordtype}{int})>\ a\ =\ Invoke(plus<long>());\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00323\ \ \ EXPECT\_EQ(3L,\ a.Perform(std::make\_tuple(1,\ 2)));}
+\DoxyCodeLine{00324\ \}}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \textcolor{comment}{//\ Tests\ using\ Invoke(f)\ as\ an\ action\ of\ a\ compatible\ type.}}
+\DoxyCodeLine{00327\ TEST(InvokeTest,\ FunctionWithCompatibleType)\ \{}
+\DoxyCodeLine{00328\ \ \ Action<long(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{short},\ \textcolor{keywordtype}{char},\ \textcolor{keywordtype}{bool})>\ a\ =\ Invoke(SumOf4);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00329\ \ \ EXPECT\_EQ(4321,\ a.Perform(std::make\_tuple(4000,\ Short(300),\ Char(20),\ \textcolor{keyword}{true})));}
+\DoxyCodeLine{00330\ \}}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00332\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ an\ object\ pointer\ and\ a\ method\ pointer.}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ nullary\ method.}}
+\DoxyCodeLine{00335\ TEST(InvokeMethodTest,\ Nullary)\ \{}
+\DoxyCodeLine{00336\ \ \ Foo\ foo;}
+\DoxyCodeLine{00337\ \ \ Action<int()>\ a\ =\ Invoke(\&foo,\ \&Foo::Nullary);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00338\ \ \ EXPECT\_EQ(123,\ a.Perform(std::make\_tuple()));}
+\DoxyCodeLine{00339\ \}}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ unary\ method.}}
+\DoxyCodeLine{00342\ TEST(InvokeMethodTest,\ Unary)\ \{}
+\DoxyCodeLine{00343\ \ \ Foo\ foo;}
+\DoxyCodeLine{00344\ \ \ Action<short(\textcolor{keywordtype}{long})>\ a\ =\ Invoke(\&foo,\ \&Foo::Unary);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00345\ \ \ EXPECT\_EQ(4123,\ a.Perform(std::make\_tuple(4000)));}
+\DoxyCodeLine{00346\ \}}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ binary\ method.}}
+\DoxyCodeLine{00349\ TEST(InvokeMethodTest,\ Binary)\ \{}
+\DoxyCodeLine{00350\ \ \ Foo\ foo;}
+\DoxyCodeLine{00351\ \ \ Action<std::string(\textcolor{keyword}{const}\ std::string\&,\ \textcolor{keywordtype}{char})>\ a\ =\ Invoke(\&foo,\ \&Foo::Binary);}
+\DoxyCodeLine{00352\ \ \ std::string\ s(\textcolor{stringliteral}{"{}Hell"{}});}
+\DoxyCodeLine{00353\ \ \ std::tuple<std::string,\ char>\ dummy\ =\ std::make\_tuple(s,\ \textcolor{charliteral}{'o'});}
+\DoxyCodeLine{00354\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}Hello"{}},\ a.Perform(dummy));}
+\DoxyCodeLine{00355\ \}}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00357\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ ternary\ method.}}
+\DoxyCodeLine{00358\ TEST(InvokeMethodTest,\ Ternary)\ \{}
+\DoxyCodeLine{00359\ \ \ Foo\ foo;}
+\DoxyCodeLine{00360\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{char})>\ a\ =\ Invoke(\&foo,\ \&Foo::Ternary);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00361\ \ \ EXPECT\_EQ(1124,\ a.Perform(std::make\_tuple(1000,\ \textcolor{keyword}{true},\ Char(1))));}
+\DoxyCodeLine{00362\ \}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 4-\/argument\ method.}}
+\DoxyCodeLine{00365\ TEST(InvokeMethodTest,\ MethodThatTakes4Arguments)\ \{}
+\DoxyCodeLine{00366\ \ \ Foo\ foo;}
+\DoxyCodeLine{00367\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a\ =\ Invoke(\&foo,\ \&Foo::SumOf4);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00368\ \ \ EXPECT\_EQ(1357,\ a.Perform(std::make\_tuple(1000,\ 200,\ 30,\ 4)));}
+\DoxyCodeLine{00369\ \}}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 5-\/argument\ method.}}
+\DoxyCodeLine{00372\ TEST(InvokeMethodTest,\ MethodThatTakes5Arguments)\ \{}
+\DoxyCodeLine{00373\ \ \ Foo\ foo;}
+\DoxyCodeLine{00374\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a\ =}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ Invoke(\&foo,\ \&Foo::SumOf5);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00376\ \ \ EXPECT\_EQ(12345,\ a.Perform(std::make\_tuple(10000,\ 2000,\ 300,\ 40,\ 5)));}
+\DoxyCodeLine{00377\ \}}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 6-\/argument\ method.}}
+\DoxyCodeLine{00380\ TEST(InvokeMethodTest,\ MethodThatTakes6Arguments)\ \{}
+\DoxyCodeLine{00381\ \ \ Foo\ foo;}
+\DoxyCodeLine{00382\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ Invoke(\&foo,\ \&Foo::SumOf6);}
+\DoxyCodeLine{00384\ \ \ EXPECT\_EQ(123456,}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ a.Perform(std::make\_tuple(100000,\ 20000,\ 3000,\ 400,\ 50,\ 6)));}
+\DoxyCodeLine{00386\ \}}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00388\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 7-\/argument\ method.}}
+\DoxyCodeLine{00389\ TEST(InvokeMethodTest,\ MethodThatTakes7Arguments)\ \{}
+\DoxyCodeLine{00390\ \ \ Foo\ foo;}
+\DoxyCodeLine{00391\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ a\ =\ Invoke(\&foo,\ \&Foo::Concat7);}
+\DoxyCodeLine{00394\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}1234567"{}},}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ a.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}1"{}}),\ CharPtr(\textcolor{stringliteral}{"{}2"{}}),\ CharPtr(\textcolor{stringliteral}{"{}3"{}}),}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}4"{}}),\ CharPtr(\textcolor{stringliteral}{"{}5"{}}),\ CharPtr(\textcolor{stringliteral}{"{}6"{}}),}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}7"{}}))));}
+\DoxyCodeLine{00398\ \}}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 8-\/argument\ method.}}
+\DoxyCodeLine{00401\ TEST(InvokeMethodTest,\ MethodThatTakes8Arguments)\ \{}
+\DoxyCodeLine{00402\ \ \ Foo\ foo;}
+\DoxyCodeLine{00403\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ a\ =\ Invoke(\&foo,\ \&Foo::Concat8);}
+\DoxyCodeLine{00406\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}12345678"{}},}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ a.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}1"{}}),\ CharPtr(\textcolor{stringliteral}{"{}2"{}}),\ CharPtr(\textcolor{stringliteral}{"{}3"{}}),}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}4"{}}),\ CharPtr(\textcolor{stringliteral}{"{}5"{}}),\ CharPtr(\textcolor{stringliteral}{"{}6"{}}),}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}7"{}}),\ CharPtr(\textcolor{stringliteral}{"{}8"{}}))));}
+\DoxyCodeLine{00410\ \}}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00412\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 9-\/argument\ method.}}
+\DoxyCodeLine{00413\ TEST(InvokeMethodTest,\ MethodThatTakes9Arguments)\ \{}
+\DoxyCodeLine{00414\ \ \ Foo\ foo;}
+\DoxyCodeLine{00415\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ a\ =\ Invoke(\&foo,\ \&Foo::Concat9);}
+\DoxyCodeLine{00419\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}123456789"{}},\ a.Perform(std::make\_tuple(}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}1"{}}),\ CharPtr(\textcolor{stringliteral}{"{}2"{}}),\ CharPtr(\textcolor{stringliteral}{"{}3"{}}),}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}4"{}}),\ CharPtr(\textcolor{stringliteral}{"{}5"{}}),\ CharPtr(\textcolor{stringliteral}{"{}6"{}}),}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}7"{}}),\ CharPtr(\textcolor{stringliteral}{"{}8"{}}),\ CharPtr(\textcolor{stringliteral}{"{}9"{}}))));}
+\DoxyCodeLine{00423\ \}}
+\DoxyCodeLine{00424\ }
+\DoxyCodeLine{00425\ \textcolor{comment}{//\ Tests\ using\ Invoke()\ with\ a\ 10-\/argument\ method.}}
+\DoxyCodeLine{00426\ TEST(InvokeMethodTest,\ MethodThatTakes10Arguments)\ \{}
+\DoxyCodeLine{00427\ \ \ Foo\ foo;}
+\DoxyCodeLine{00428\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ a\ =\ Invoke(\&foo,\ \&Foo::Concat10);}
+\DoxyCodeLine{00432\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}1234567890"{}},}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ a.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}1"{}}),\ CharPtr(\textcolor{stringliteral}{"{}2"{}}),\ CharPtr(\textcolor{stringliteral}{"{}3"{}}),}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}4"{}}),\ CharPtr(\textcolor{stringliteral}{"{}5"{}}),\ CharPtr(\textcolor{stringliteral}{"{}6"{}}),}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}7"{}}),\ CharPtr(\textcolor{stringliteral}{"{}8"{}}),\ CharPtr(\textcolor{stringliteral}{"{}9"{}}),}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CharPtr(\textcolor{stringliteral}{"{}0"{}}))));}
+\DoxyCodeLine{00437\ \}}
+\DoxyCodeLine{00438\ }
+\DoxyCodeLine{00439\ \textcolor{comment}{//\ Tests\ using\ Invoke(f)\ as\ an\ action\ of\ a\ compatible\ type.}}
+\DoxyCodeLine{00440\ TEST(InvokeMethodTest,\ MethodWithCompatibleType)\ \{}
+\DoxyCodeLine{00441\ \ \ Foo\ foo;}
+\DoxyCodeLine{00442\ \ \ Action<long(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{short},\ \textcolor{keywordtype}{char},\ \textcolor{keywordtype}{bool})>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ Invoke(\&foo,\ \&Foo::SumOf4);}
+\DoxyCodeLine{00444\ \ \ EXPECT\_EQ(4444,\ a.Perform(std::make\_tuple(4000,\ Short(300),\ Char(20),\ \textcolor{keyword}{true})));}
+\DoxyCodeLine{00445\ \}}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \textcolor{comment}{//\ Tests\ using\ WithoutArgs\ with\ an\ action\ that\ takes\ no\ argument.}}
+\DoxyCodeLine{00448\ TEST(WithoutArgsTest,\ NoArg)\ \{}
+\DoxyCodeLine{00449\ \ \ Action<int(\textcolor{keywordtype}{int}\ n)>\ a\ =\ WithoutArgs(Invoke(Nullary));\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00450\ \ \ EXPECT\_EQ(1,\ a.Perform(std::make\_tuple(2)));}
+\DoxyCodeLine{00451\ \}}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \textcolor{comment}{//\ Tests\ using\ WithArg\ with\ an\ action\ that\ takes\ 1\ argument.}}
+\DoxyCodeLine{00454\ TEST(WithArgTest,\ OneArg)\ \{}
+\DoxyCodeLine{00455\ \ \ Action<bool(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{int}\ n)>\ b\ =\ WithArg<1>(Invoke(Unary));\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00456\ \ \ EXPECT\_TRUE(b.Perform(std::make\_tuple(1.5,\ -\/1)));}
+\DoxyCodeLine{00457\ \ \ EXPECT\_FALSE(b.Perform(std::make\_tuple(1.5,\ 1)));}
+\DoxyCodeLine{00458\ \}}
+\DoxyCodeLine{00459\ }
+\DoxyCodeLine{00460\ TEST(ReturnArgActionTest,\ WorksForOneArgIntArg0)\ \{}
+\DoxyCodeLine{00461\ \ \ \textcolor{keyword}{const}\ Action<int(\textcolor{keywordtype}{int})>\ a\ =\ ReturnArg<0>();}
+\DoxyCodeLine{00462\ \ \ EXPECT\_EQ(5,\ a.Perform(std::make\_tuple(5)));}
+\DoxyCodeLine{00463\ \}}
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ TEST(ReturnArgActionTest,\ WorksForMultiArgBoolArg0)\ \{}
+\DoxyCodeLine{00466\ \ \ \textcolor{keyword}{const}\ Action<bool(\textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{bool})>\ a\ =\ ReturnArg<0>();}
+\DoxyCodeLine{00467\ \ \ EXPECT\_TRUE(a.Perform(std::make\_tuple(\textcolor{keyword}{true},\ \textcolor{keyword}{false},\ \textcolor{keyword}{false})));}
+\DoxyCodeLine{00468\ \}}
+\DoxyCodeLine{00469\ }
+\DoxyCodeLine{00470\ TEST(ReturnArgActionTest,\ WorksForMultiArgStringArg2)\ \{}
+\DoxyCodeLine{00471\ \ \ \textcolor{keyword}{const}\ Action<std::string(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ std::string,\ \textcolor{keywordtype}{int})>\ a\ =\ ReturnArg<2>();}
+\DoxyCodeLine{00472\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}seven"{}},\ a.Perform(std::make\_tuple(5,\ 6,\ std::string(\textcolor{stringliteral}{"{}seven"{}}),\ 8)));}
+\DoxyCodeLine{00473\ \}}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ TEST(ReturnArgActionTest,\ WorksForNonConstRefArg0)\ \{}
+\DoxyCodeLine{00476\ \ \ \textcolor{keyword}{const}\ Action<std::string\&(std::string\&)>\ a\ =\ ReturnArg<0>();}
+\DoxyCodeLine{00477\ \ \ std::string\ s\ =\ \textcolor{stringliteral}{"{}12345"{}};}
+\DoxyCodeLine{00478\ \ \ EXPECT\_EQ(\&s,\ \&a.Perform(std::forward\_as\_tuple(s)));}
+\DoxyCodeLine{00479\ \}}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00481\ TEST(SaveArgActionTest,\ WorksForSameType)\ \{}
+\DoxyCodeLine{00482\ \ \ \textcolor{keywordtype}{int}\ result\ =\ 0;}
+\DoxyCodeLine{00483\ \ \ \textcolor{keyword}{const}\ Action<void(\textcolor{keywordtype}{int}\ n)>\ a1\ =\ SaveArg<0>(\&result);}
+\DoxyCodeLine{00484\ \ \ a1.Perform(std::make\_tuple(5));}
+\DoxyCodeLine{00485\ \ \ EXPECT\_EQ(5,\ result);}
+\DoxyCodeLine{00486\ \}}
+\DoxyCodeLine{00487\ }
+\DoxyCodeLine{00488\ TEST(SaveArgActionTest,\ WorksForCompatibleType)\ \{}
+\DoxyCodeLine{00489\ \ \ \textcolor{keywordtype}{int}\ result\ =\ 0;}
+\DoxyCodeLine{00490\ \ \ \textcolor{keyword}{const}\ Action<void(\textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{char})>\ a1\ =\ SaveArg<1>(\&result);}
+\DoxyCodeLine{00491\ \ \ a1.Perform(std::make\_tuple(\textcolor{keyword}{true},\ \textcolor{charliteral}{'a'}));}
+\DoxyCodeLine{00492\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ result);}
+\DoxyCodeLine{00493\ \}}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ TEST(SaveArgPointeeActionTest,\ WorksForSameType)\ \{}
+\DoxyCodeLine{00496\ \ \ \textcolor{keywordtype}{int}\ result\ =\ 0;}
+\DoxyCodeLine{00497\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ value\ =\ 5;}
+\DoxyCodeLine{00498\ \ \ \textcolor{keyword}{const}\ Action<void(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*)>\ a1\ =\ SaveArgPointee<0>(\&result);}
+\DoxyCodeLine{00499\ \ \ a1.Perform(std::make\_tuple(\&value));}
+\DoxyCodeLine{00500\ \ \ EXPECT\_EQ(5,\ result);}
+\DoxyCodeLine{00501\ \}}
+\DoxyCodeLine{00502\ }
+\DoxyCodeLine{00503\ TEST(SaveArgPointeeActionTest,\ WorksForCompatibleType)\ \{}
+\DoxyCodeLine{00504\ \ \ \textcolor{keywordtype}{int}\ result\ =\ 0;}
+\DoxyCodeLine{00505\ \ \ \textcolor{keywordtype}{char}\ value\ =\ \textcolor{charliteral}{'a'};}
+\DoxyCodeLine{00506\ \ \ \textcolor{keyword}{const}\ Action<void(\textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{char}*)>\ a1\ =\ SaveArgPointee<1>(\&result);}
+\DoxyCodeLine{00507\ \ \ a1.Perform(std::make\_tuple(\textcolor{keyword}{true},\ \&value));}
+\DoxyCodeLine{00508\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ result);}
+\DoxyCodeLine{00509\ \}}
+\DoxyCodeLine{00510\ }
+\DoxyCodeLine{00511\ TEST(SetArgRefereeActionTest,\ WorksForSameType)\ \{}
+\DoxyCodeLine{00512\ \ \ \textcolor{keywordtype}{int}\ value\ =\ 0;}
+\DoxyCodeLine{00513\ \ \ \textcolor{keyword}{const}\ Action<void(\textcolor{keywordtype}{int}\&)>\ a1\ =\ SetArgReferee<0>(1);}
+\DoxyCodeLine{00514\ \ \ a1.Perform(std::tuple<int\&>(value));}
+\DoxyCodeLine{00515\ \ \ EXPECT\_EQ(1,\ value);}
+\DoxyCodeLine{00516\ \}}
+\DoxyCodeLine{00517\ }
+\DoxyCodeLine{00518\ TEST(SetArgRefereeActionTest,\ WorksForCompatibleType)\ \{}
+\DoxyCodeLine{00519\ \ \ \textcolor{keywordtype}{int}\ value\ =\ 0;}
+\DoxyCodeLine{00520\ \ \ \textcolor{keyword}{const}\ Action<void(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\&)>\ a1\ =\ SetArgReferee<1>(\textcolor{charliteral}{'a'});}
+\DoxyCodeLine{00521\ \ \ a1.Perform(std::tuple<int,\ int\&>(0,\ value));}
+\DoxyCodeLine{00522\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ value);}
+\DoxyCodeLine{00523\ \}}
+\DoxyCodeLine{00524\ }
+\DoxyCodeLine{00525\ TEST(SetArgRefereeActionTest,\ WorksWithExtraArguments)\ \{}
+\DoxyCodeLine{00526\ \ \ \textcolor{keywordtype}{int}\ value\ =\ 0;}
+\DoxyCodeLine{00527\ \ \ \textcolor{keyword}{const}\ Action<void(\textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\&,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>\ a1\ =\ SetArgReferee<2>(\textcolor{charliteral}{'a'});}
+\DoxyCodeLine{00528\ \ \ a1.Perform(std::tuple<bool,\ int,\ int\&,\ const\ char*>(\textcolor{keyword}{true},\ 0,\ value,\ \textcolor{stringliteral}{"{}hi"{}}));}
+\DoxyCodeLine{00529\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ value);}
+\DoxyCodeLine{00530\ \}}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \textcolor{comment}{//\ A\ class\ that\ can\ be\ used\ to\ verify\ that\ its\ destructor\ is\ called:\ it\ will\ set}}
+\DoxyCodeLine{00533\ \textcolor{comment}{//\ the\ bool\ provided\ to\ the\ constructor\ to\ true\ when\ destroyed.}}
+\DoxyCodeLine{00534\ \textcolor{keyword}{class\ }DeletionTester\ \{}
+\DoxyCodeLine{00535\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00536\ \ \ \textcolor{keyword}{explicit}\ DeletionTester(\textcolor{keywordtype}{bool}*\ is\_deleted)\ :\ is\_deleted\_(is\_deleted)\ \{}
+\DoxyCodeLine{00537\ \ \ \ \ \textcolor{comment}{//\ Make\ sure\ the\ bit\ is\ set\ to\ false.}}
+\DoxyCodeLine{00538\ \ \ \ \ *is\_deleted\_\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00539\ \ \ \}}
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00541\ \ \ \string~DeletionTester()\ \{\ *is\_deleted\_\ =\ \textcolor{keyword}{true};\ \}}
+\DoxyCodeLine{00542\ }
+\DoxyCodeLine{00543\ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00544\ \ \ \textcolor{keywordtype}{bool}*\ is\_deleted\_;}
+\DoxyCodeLine{00545\ \};}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ TEST(DeleteArgActionTest,\ OneArg)\ \{}
+\DoxyCodeLine{00548\ \ \ \textcolor{keywordtype}{bool}\ is\_deleted\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00549\ \ \ \mbox{\hyperlink{classtesting_1_1gmock__more__actions__test_1_1_deletion_tester}{DeletionTester}}*\ t\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classtesting_1_1gmock__more__actions__test_1_1_deletion_tester}{DeletionTester}}(\&is\_deleted);}
+\DoxyCodeLine{00550\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classtesting_1_1_action}{Action}}<void(\mbox{\hyperlink{classtesting_1_1gmock__more__actions__test_1_1_deletion_tester}{DeletionTester}}*)>\ a1\ =\ DeleteArg<0>();\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00551\ \ \ EXPECT\_FALSE(is\_deleted);}
+\DoxyCodeLine{00552\ \ \ a1.Perform(std::make\_tuple(t));}
+\DoxyCodeLine{00553\ \ \ EXPECT\_TRUE(is\_deleted);}
+\DoxyCodeLine{00554\ \}}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00556\ TEST(DeleteArgActionTest,\ TenArgs)\ \{}
+\DoxyCodeLine{00557\ \ \ \textcolor{keywordtype}{bool}\ is\_deleted\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00558\ \ \ DeletionTester*\ t\ =\ \textcolor{keyword}{new}\ DeletionTester(\&is\_deleted);}
+\DoxyCodeLine{00559\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classtesting_1_1_action}{Action}}<void(\textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DeletionTester*)>}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ a1\ =\ DeleteArg<9>();}
+\DoxyCodeLine{00562\ \ \ EXPECT\_FALSE(is\_deleted);}
+\DoxyCodeLine{00563\ \ \ a1.Perform(std::make\_tuple(\textcolor{keyword}{true},\ 5,\ 6,\ CharPtr(\textcolor{stringliteral}{"{}hi"{}}),\ \textcolor{keyword}{false},\ 7,\ 8,\ 9,\ 10,\ t));}
+\DoxyCodeLine{00564\ \ \ EXPECT\_TRUE(is\_deleted);}
+\DoxyCodeLine{00565\ \}}
+\DoxyCodeLine{00566\ }
+\DoxyCodeLine{00567\ \textcolor{preprocessor}{\#if\ GTEST\_HAS\_EXCEPTIONS}}
+\DoxyCodeLine{00568\ }
+\DoxyCodeLine{00569\ TEST(ThrowActionTest,\ ThrowsGivenExceptionInVoidFunction)\ \{}
+\DoxyCodeLine{00570\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classtesting_1_1gmock__more__actions__test_1_1_action}{Action}}<void(\textcolor{keywordtype}{int}\ n)>\ a\ =\ Throw(\textcolor{charliteral}{'a'});}
+\DoxyCodeLine{00571\ \ \ EXPECT\_THROW(a.Perform(std::make\_tuple(0)),\ \textcolor{keywordtype}{char});}
+\DoxyCodeLine{00572\ \}}
+\DoxyCodeLine{00573\ }
+\DoxyCodeLine{00574\ \textcolor{keyword}{class\ }MyException\ \{\};}
+\DoxyCodeLine{00575\ }
+\DoxyCodeLine{00576\ TEST(ThrowActionTest,\ ThrowsGivenExceptionInNonVoidFunction)\ \{}
+\DoxyCodeLine{00577\ \ \ \textcolor{keyword}{const}\ Action<double(\textcolor{keywordtype}{char}\ ch)>\ a\ =\ Throw(MyException());}
+\DoxyCodeLine{00578\ \ \ EXPECT\_THROW(a.Perform(std::make\_tuple(\textcolor{charliteral}{'0'})),\ MyException);}
+\DoxyCodeLine{00579\ \}}
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ TEST(ThrowActionTest,\ ThrowsGivenExceptionInNullaryFunction)\ \{}
+\DoxyCodeLine{00582\ \ \ \textcolor{keyword}{const}\ Action<double()>\ a\ =\ Throw(MyException());}
+\DoxyCodeLine{00583\ \ \ EXPECT\_THROW(a.Perform(std::make\_tuple()),\ MyException);}
+\DoxyCodeLine{00584\ \}}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00586\ \textcolor{keyword}{class\ }Object\ \{}
+\DoxyCodeLine{00587\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00588\ \ \ \textcolor{keyword}{virtual}\ \string~Object()\ \{\}}
+\DoxyCodeLine{00589\ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ Func()\ \{\}}
+\DoxyCodeLine{00590\ \};}
+\DoxyCodeLine{00591\ }
+\DoxyCodeLine{00592\ \textcolor{keyword}{class\ }MockObject\ :\ \textcolor{keyword}{public}\ Object\ \{}
+\DoxyCodeLine{00593\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00594\ \ \ \string~MockObject()\textcolor{keyword}{\ override\ }\{\}}
+\DoxyCodeLine{00595\ \ \ MOCK\_METHOD(\textcolor{keywordtype}{void},\ Func,\ (),\ (\textcolor{keyword}{override}));}
+\DoxyCodeLine{00596\ \};}
+\DoxyCodeLine{00597\ }
+\DoxyCodeLine{00598\ TEST(ThrowActionTest,\ Times0)\ \{}
+\DoxyCodeLine{00599\ \ \ EXPECT\_NONFATAL\_FAILURE(}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ []\ \{}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ MockObject\ m;}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ ON\_CALL(m,\ Func()).WillByDefault([]\ \{\ \textcolor{keywordflow}{throw}\ \textcolor{stringliteral}{"{}something"{}};\ \});}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ EXPECT\_CALL(m,\ Func()).Times(0);}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ m.Func();}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (...)\ \{}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Exception\ is\ caught\ but\ Times(0)\ still\ triggers\ a\ failure.}}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \}(),}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00611\ \}}
+\DoxyCodeLine{00612\ }
+\DoxyCodeLine{00613\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GTEST\_HAS\_EXCEPTIONS}}
+\DoxyCodeLine{00614\ }
+\DoxyCodeLine{00615\ \textcolor{comment}{//\ Tests\ that\ SetArrayArgument<N>(first,\ last)\ sets\ the\ elements\ of\ the\ array}}
+\DoxyCodeLine{00616\ \textcolor{comment}{//\ pointed\ to\ by\ the\ N-\/th\ (0-\/based)\ argument\ to\ values\ in\ range\ [first,\ last).}}
+\DoxyCodeLine{00617\ TEST(SetArrayArgumentTest,\ SetsTheNthArray)\ \{}
+\DoxyCodeLine{00618\ \ \ \textcolor{keyword}{using\ }MyFunction\ =\ void(\textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{char}*);}
+\DoxyCodeLine{00619\ \ \ \textcolor{keywordtype}{int}\ numbers[]\ =\ \{1,\ 2,\ 3\};}
+\DoxyCodeLine{00620\ \ \ Action<MyFunction>\ a\ =\ SetArrayArgument<1>(numbers,\ numbers\ +\ 3);}
+\DoxyCodeLine{00621\ }
+\DoxyCodeLine{00622\ \ \ \textcolor{keywordtype}{int}\ n[4]\ =\ \{\};}
+\DoxyCodeLine{00623\ \ \ \textcolor{keywordtype}{int}*\ pn\ =\ n;}
+\DoxyCodeLine{00624\ \ \ \textcolor{keywordtype}{char}\ ch[4]\ =\ \{\};}
+\DoxyCodeLine{00625\ \ \ \textcolor{keywordtype}{char}*\ pch\ =\ ch;}
+\DoxyCodeLine{00626\ \ \ a.Perform(std::make\_tuple(\textcolor{keyword}{true},\ pn,\ pch));}
+\DoxyCodeLine{00627\ \ \ EXPECT\_EQ(1,\ n[0]);}
+\DoxyCodeLine{00628\ \ \ EXPECT\_EQ(2,\ n[1]);}
+\DoxyCodeLine{00629\ \ \ EXPECT\_EQ(3,\ n[2]);}
+\DoxyCodeLine{00630\ \ \ EXPECT\_EQ(0,\ n[3]);}
+\DoxyCodeLine{00631\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'\(\backslash\)0'},\ ch[0]);}
+\DoxyCodeLine{00632\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'\(\backslash\)0'},\ ch[1]);}
+\DoxyCodeLine{00633\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'\(\backslash\)0'},\ ch[2]);}
+\DoxyCodeLine{00634\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'\(\backslash\)0'},\ ch[3]);}
+\DoxyCodeLine{00635\ }
+\DoxyCodeLine{00636\ \ \ \textcolor{comment}{//\ Tests\ first\ and\ last\ are\ iterators.}}
+\DoxyCodeLine{00637\ \ \ std::string\ letters\ =\ \textcolor{stringliteral}{"{}abc"{}};}
+\DoxyCodeLine{00638\ \ \ a\ =\ SetArrayArgument<2>(letters.begin(),\ letters.end());}
+\DoxyCodeLine{00639\ \ \ std::fill\_n(n,\ 4,\ 0);}
+\DoxyCodeLine{00640\ \ \ std::fill\_n(ch,\ 4,\ \textcolor{charliteral}{'\(\backslash\)0'});}
+\DoxyCodeLine{00641\ \ \ a.Perform(std::make\_tuple(\textcolor{keyword}{true},\ pn,\ pch));}
+\DoxyCodeLine{00642\ \ \ EXPECT\_EQ(0,\ n[0]);}
+\DoxyCodeLine{00643\ \ \ EXPECT\_EQ(0,\ n[1]);}
+\DoxyCodeLine{00644\ \ \ EXPECT\_EQ(0,\ n[2]);}
+\DoxyCodeLine{00645\ \ \ EXPECT\_EQ(0,\ n[3]);}
+\DoxyCodeLine{00646\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ ch[0]);}
+\DoxyCodeLine{00647\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'b'},\ ch[1]);}
+\DoxyCodeLine{00648\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'c'},\ ch[2]);}
+\DoxyCodeLine{00649\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'\(\backslash\)0'},\ ch[3]);}
+\DoxyCodeLine{00650\ \}}
+\DoxyCodeLine{00651\ }
+\DoxyCodeLine{00652\ \textcolor{comment}{//\ Tests\ SetArrayArgument<N>(first,\ last)\ where\ first\ ==\ last.}}
+\DoxyCodeLine{00653\ TEST(SetArrayArgumentTest,\ SetsTheNthArrayWithEmptyRange)\ \{}
+\DoxyCodeLine{00654\ \ \ \textcolor{keyword}{using\ }MyFunction\ =\ void(\textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int}*);}
+\DoxyCodeLine{00655\ \ \ \textcolor{keywordtype}{int}\ numbers[]\ =\ \{1,\ 2,\ 3\};}
+\DoxyCodeLine{00656\ \ \ Action<MyFunction>\ a\ =\ SetArrayArgument<1>(numbers,\ numbers);}
+\DoxyCodeLine{00657\ }
+\DoxyCodeLine{00658\ \ \ \textcolor{keywordtype}{int}\ n[4]\ =\ \{\};}
+\DoxyCodeLine{00659\ \ \ \textcolor{keywordtype}{int}*\ pn\ =\ n;}
+\DoxyCodeLine{00660\ \ \ a.Perform(std::make\_tuple(\textcolor{keyword}{true},\ pn));}
+\DoxyCodeLine{00661\ \ \ EXPECT\_EQ(0,\ n[0]);}
+\DoxyCodeLine{00662\ \ \ EXPECT\_EQ(0,\ n[1]);}
+\DoxyCodeLine{00663\ \ \ EXPECT\_EQ(0,\ n[2]);}
+\DoxyCodeLine{00664\ \ \ EXPECT\_EQ(0,\ n[3]);}
+\DoxyCodeLine{00665\ \}}
+\DoxyCodeLine{00666\ }
+\DoxyCodeLine{00667\ \textcolor{comment}{//\ Tests\ SetArrayArgument<N>(first,\ last)\ where\ *first\ is\ convertible}}
+\DoxyCodeLine{00668\ \textcolor{comment}{//\ (but\ not\ equal)\ to\ the\ argument\ type.}}
+\DoxyCodeLine{00669\ TEST(SetArrayArgumentTest,\ SetsTheNthArrayWithConvertibleType)\ \{}
+\DoxyCodeLine{00670\ \ \ \textcolor{keyword}{using\ }MyFunction\ =\ void(\textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int}*);}
+\DoxyCodeLine{00671\ \ \ \textcolor{keywordtype}{char}\ chars[]\ =\ \{97,\ 98,\ 99\};}
+\DoxyCodeLine{00672\ \ \ Action<MyFunction>\ a\ =\ SetArrayArgument<1>(chars,\ chars\ +\ 3);}
+\DoxyCodeLine{00673\ }
+\DoxyCodeLine{00674\ \ \ \textcolor{keywordtype}{int}\ codes[4]\ =\ \{111,\ 222,\ 333,\ 444\};}
+\DoxyCodeLine{00675\ \ \ \textcolor{keywordtype}{int}*\ pcodes\ =\ codes;}
+\DoxyCodeLine{00676\ \ \ a.Perform(std::make\_tuple(\textcolor{keyword}{true},\ pcodes));}
+\DoxyCodeLine{00677\ \ \ EXPECT\_EQ(97,\ codes[0]);}
+\DoxyCodeLine{00678\ \ \ EXPECT\_EQ(98,\ codes[1]);}
+\DoxyCodeLine{00679\ \ \ EXPECT\_EQ(99,\ codes[2]);}
+\DoxyCodeLine{00680\ \ \ EXPECT\_EQ(444,\ codes[3]);}
+\DoxyCodeLine{00681\ \}}
+\DoxyCodeLine{00682\ }
+\DoxyCodeLine{00683\ \textcolor{comment}{//\ Test\ SetArrayArgument<N>(first,\ last)\ with\ iterator\ as\ argument.}}
+\DoxyCodeLine{00684\ TEST(SetArrayArgumentTest,\ SetsTheNthArrayWithIteratorArgument)\ \{}
+\DoxyCodeLine{00685\ \ \ \textcolor{keyword}{using\ }MyFunction\ =\ void(\textcolor{keywordtype}{bool},\ std::back\_insert\_iterator<std::string>);}
+\DoxyCodeLine{00686\ \ \ std::string\ letters\ =\ \textcolor{stringliteral}{"{}abc"{}};}
+\DoxyCodeLine{00687\ \ \ Action<MyFunction>\ a\ =\ SetArrayArgument<1>(letters.begin(),\ letters.end());}
+\DoxyCodeLine{00688\ }
+\DoxyCodeLine{00689\ \ \ std::string\ s;}
+\DoxyCodeLine{00690\ \ \ a.Perform(std::make\_tuple(\textcolor{keyword}{true},\ std::back\_inserter(s)));}
+\DoxyCodeLine{00691\ \ \ EXPECT\_EQ(letters,\ s);}
+\DoxyCodeLine{00692\ \}}
+\DoxyCodeLine{00693\ }
+\DoxyCodeLine{00694\ TEST(ReturnPointeeTest,\ Works)\ \{}
+\DoxyCodeLine{00695\ \ \ \textcolor{keywordtype}{int}\ n\ =\ 42;}
+\DoxyCodeLine{00696\ \ \ \textcolor{keyword}{const}\ Action<int()>\ a\ =\ ReturnPointee(\&n);}
+\DoxyCodeLine{00697\ \ \ EXPECT\_EQ(42,\ a.Perform(std::make\_tuple()));}
+\DoxyCodeLine{00698\ }
+\DoxyCodeLine{00699\ \ \ n\ =\ 43;}
+\DoxyCodeLine{00700\ \ \ EXPECT\_EQ(43,\ a.Perform(std::make\_tuple()));}
+\DoxyCodeLine{00701\ \}}
+\DoxyCodeLine{00702\ }
+\DoxyCodeLine{00703\ \textcolor{comment}{//\ Tests\ InvokeArgument<N>(...).}}
+\DoxyCodeLine{00704\ }
+\DoxyCodeLine{00705\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ nullary\ function.}}
+\DoxyCodeLine{00706\ TEST(InvokeArgumentTest,\ Function0)\ \{}
+\DoxyCodeLine{00707\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ (*)())>\ a\ =\ InvokeArgument<1>();\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00708\ \ \ EXPECT\_EQ(1,\ a.Perform(std::make\_tuple(2,\ \&Nullary)));}
+\DoxyCodeLine{00709\ \}}
+\DoxyCodeLine{00710\ }
+\DoxyCodeLine{00711\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ unary\ functor.}}
+\DoxyCodeLine{00712\ TEST(InvokeArgumentTest,\ Functor1)\ \{}
+\DoxyCodeLine{00713\ \ \ Action<int(UnaryFunctor)>\ a\ =\ InvokeArgument<0>(\textcolor{keyword}{true});\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00714\ \ \ EXPECT\_EQ(1,\ a.Perform(std::make\_tuple(UnaryFunctor())));}
+\DoxyCodeLine{00715\ \}}
+\DoxyCodeLine{00716\ }
+\DoxyCodeLine{00717\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ unary\ move-\/only\ functor.}}
+\DoxyCodeLine{00718\ TEST(InvokeArgumentTest,\ Functor1MoveOnly)\ \{}
+\DoxyCodeLine{00719\ \ \ Action<int(UnaryMoveOnlyFunctor)>\ a\ =\ InvokeArgument<0>(\textcolor{keyword}{true});\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00720\ \ \ EXPECT\_EQ(1,\ a.Perform(std::make\_tuple(UnaryMoveOnlyFunctor())));}
+\DoxyCodeLine{00721\ \}}
+\DoxyCodeLine{00722\ }
+\DoxyCodeLine{00723\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ one-\/shot\ unary\ functor.}}
+\DoxyCodeLine{00724\ TEST(InvokeArgumentTest,\ OneShotFunctor1)\ \{}
+\DoxyCodeLine{00725\ \ \ Action<int(OneShotUnaryFunctor)>\ a\ =\ InvokeArgument<0>(\textcolor{keyword}{true});\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00726\ \ \ EXPECT\_EQ(1,\ a.Perform(std::make\_tuple(OneShotUnaryFunctor())));}
+\DoxyCodeLine{00727\ \}}
+\DoxyCodeLine{00728\ }
+\DoxyCodeLine{00729\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ 5-\/ary\ function.}}
+\DoxyCodeLine{00730\ TEST(InvokeArgumentTest,\ Function5)\ \{}
+\DoxyCodeLine{00731\ \ \ Action<int(\textcolor{keywordtype}{int}\ (*)(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}))>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ InvokeArgument<0>(10000,\ 2000,\ 300,\ 40,\ 5);}
+\DoxyCodeLine{00733\ \ \ EXPECT\_EQ(12345,\ a.Perform(std::make\_tuple(\&SumOf5)));}
+\DoxyCodeLine{00734\ \}}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00736\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ 5-\/ary\ functor.}}
+\DoxyCodeLine{00737\ TEST(InvokeArgumentTest,\ Functor5)\ \{}
+\DoxyCodeLine{00738\ \ \ Action<int(SumOf5Functor)>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ InvokeArgument<0>(10000,\ 2000,\ 300,\ 40,\ 5);}
+\DoxyCodeLine{00740\ \ \ EXPECT\_EQ(12345,\ a.Perform(std::make\_tuple(SumOf5Functor())));}
+\DoxyCodeLine{00741\ \}}
+\DoxyCodeLine{00742\ }
+\DoxyCodeLine{00743\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ 6-\/ary\ function.}}
+\DoxyCodeLine{00744\ TEST(InvokeArgumentTest,\ Function6)\ \{}
+\DoxyCodeLine{00745\ \ \ Action<int(\textcolor{keywordtype}{int}\ (*)(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}))>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ InvokeArgument<0>(100000,\ 20000,\ 3000,\ 400,\ 50,\ 6);}
+\DoxyCodeLine{00747\ \ \ EXPECT\_EQ(123456,\ a.Perform(std::make\_tuple(\&SumOf6)));}
+\DoxyCodeLine{00748\ \}}
+\DoxyCodeLine{00749\ }
+\DoxyCodeLine{00750\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ 6-\/ary\ functor.}}
+\DoxyCodeLine{00751\ TEST(InvokeArgumentTest,\ Functor6)\ \{}
+\DoxyCodeLine{00752\ \ \ Action<int(SumOf6Functor)>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ InvokeArgument<0>(100000,\ 20000,\ 3000,\ 400,\ 50,\ 6);}
+\DoxyCodeLine{00754\ \ \ EXPECT\_EQ(123456,\ a.Perform(std::make\_tuple(SumOf6Functor())));}
+\DoxyCodeLine{00755\ \}}
+\DoxyCodeLine{00756\ }
+\DoxyCodeLine{00757\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ 7-\/ary\ function.}}
+\DoxyCodeLine{00758\ TEST(InvokeArgumentTest,\ Function7)\ \{}
+\DoxyCodeLine{00759\ \ \ Action<std::string(std::string(*)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*))>}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ a\ =\ InvokeArgument<0>(\textcolor{stringliteral}{"{}1"{}},\ \textcolor{stringliteral}{"{}2"{}},\ \textcolor{stringliteral}{"{}3"{}},\ \textcolor{stringliteral}{"{}4"{}},\ \textcolor{stringliteral}{"{}5"{}},\ \textcolor{stringliteral}{"{}6"{}},\ \textcolor{stringliteral}{"{}7"{}});}
+\DoxyCodeLine{00763\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}1234567"{}},\ a.Perform(std::make\_tuple(\&Concat7)));}
+\DoxyCodeLine{00764\ \}}
+\DoxyCodeLine{00765\ }
+\DoxyCodeLine{00766\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ 8-\/ary\ function.}}
+\DoxyCodeLine{00767\ TEST(InvokeArgumentTest,\ Function8)\ \{}
+\DoxyCodeLine{00768\ \ \ Action<std::string(std::string(*)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*))>}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ a\ =\ InvokeArgument<0>(\textcolor{stringliteral}{"{}1"{}},\ \textcolor{stringliteral}{"{}2"{}},\ \textcolor{stringliteral}{"{}3"{}},\ \textcolor{stringliteral}{"{}4"{}},\ \textcolor{stringliteral}{"{}5"{}},\ \textcolor{stringliteral}{"{}6"{}},\ \textcolor{stringliteral}{"{}7"{}},\ \textcolor{stringliteral}{"{}8"{}});}
+\DoxyCodeLine{00772\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}12345678"{}},\ a.Perform(std::make\_tuple(\&Concat8)));}
+\DoxyCodeLine{00773\ \}}
+\DoxyCodeLine{00774\ }
+\DoxyCodeLine{00775\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ 9-\/ary\ function.}}
+\DoxyCodeLine{00776\ TEST(InvokeArgumentTest,\ Function9)\ \{}
+\DoxyCodeLine{00777\ \ \ Action<std::string(std::string(*)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*))>}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ a\ =\ InvokeArgument<0>(\textcolor{stringliteral}{"{}1"{}},\ \textcolor{stringliteral}{"{}2"{}},\ \textcolor{stringliteral}{"{}3"{}},\ \textcolor{stringliteral}{"{}4"{}},\ \textcolor{stringliteral}{"{}5"{}},\ \textcolor{stringliteral}{"{}6"{}},\ \textcolor{stringliteral}{"{}7"{}},\ \textcolor{stringliteral}{"{}8"{}},\ \textcolor{stringliteral}{"{}9"{}});}
+\DoxyCodeLine{00781\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}123456789"{}},\ a.Perform(std::make\_tuple(\&Concat9)));}
+\DoxyCodeLine{00782\ \}}
+\DoxyCodeLine{00783\ }
+\DoxyCodeLine{00784\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ 10-\/ary\ function.}}
+\DoxyCodeLine{00785\ TEST(InvokeArgumentTest,\ Function10)\ \{}
+\DoxyCodeLine{00786\ \ \ Action<std::string(std::string(*)(}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*))>}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ a\ =\ InvokeArgument<0>(\textcolor{stringliteral}{"{}1"{}},\ \textcolor{stringliteral}{"{}2"{}},\ \textcolor{stringliteral}{"{}3"{}},\ \textcolor{stringliteral}{"{}4"{}},\ \textcolor{stringliteral}{"{}5"{}},\ \textcolor{stringliteral}{"{}6"{}},\ \textcolor{stringliteral}{"{}7"{}},\ \textcolor{stringliteral}{"{}8"{}},\ \textcolor{stringliteral}{"{}9"{}},\ \textcolor{stringliteral}{"{}0"{}});}
+\DoxyCodeLine{00790\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}1234567890"{}},\ a.Perform(std::make\_tuple(\&Concat10)));}
+\DoxyCodeLine{00791\ \}}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ function\ that\ takes\ a\ pointer\ argument.}}
+\DoxyCodeLine{00794\ TEST(InvokeArgumentTest,\ ByPointerFunction)\ \{}
+\DoxyCodeLine{00795\ \ \ Action<\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ (*)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ input,\ \textcolor{keywordtype}{short}\ n))>\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ a\ =\ InvokeArgument<0>(\textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\textcolor{stringliteral}{"{}Hi"{}}),\ Short(1));}
+\DoxyCodeLine{00797\ \ \ EXPECT\_STREQ(\textcolor{stringliteral}{"{}i"{}},\ a.Perform(std::make\_tuple(\&Binary)));}
+\DoxyCodeLine{00798\ \}}
+\DoxyCodeLine{00799\ }
+\DoxyCodeLine{00800\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ function\ that\ takes\ a\ const\ char*}}
+\DoxyCodeLine{00801\ \textcolor{comment}{//\ by\ passing\ it\ a\ C-\/string\ literal.}}
+\DoxyCodeLine{00802\ TEST(InvokeArgumentTest,\ FunctionWithCStringLiteral)\ \{}
+\DoxyCodeLine{00803\ \ \ Action<\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ (*)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ input,\ \textcolor{keywordtype}{short}\ n))>\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00804\ \ \ \ \ \ \ a\ =\ InvokeArgument<0>(\textcolor{stringliteral}{"{}Hi"{}},\ Short(1));}
+\DoxyCodeLine{00805\ \ \ EXPECT\_STREQ(\textcolor{stringliteral}{"{}i"{}},\ a.Perform(std::make\_tuple(\&Binary)));}
+\DoxyCodeLine{00806\ \}}
+\DoxyCodeLine{00807\ }
+\DoxyCodeLine{00808\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ a\ function\ that\ takes\ a\ const\ reference.}}
+\DoxyCodeLine{00809\ TEST(InvokeArgumentTest,\ ByConstReferenceFunction)\ \{}
+\DoxyCodeLine{00810\ \ \ Action<bool(\textcolor{keywordtype}{bool}\ (*function)(\textcolor{keyword}{const}\ std::string\&\ s))>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ InvokeArgument<0>(std::string(\textcolor{stringliteral}{"{}Hi"{}}));}
+\DoxyCodeLine{00812\ \ \ \textcolor{comment}{//\ When\ action\ 'a'\ is\ constructed,\ it\ makes\ a\ copy\ of\ the\ temporary}}
+\DoxyCodeLine{00813\ \ \ \textcolor{comment}{//\ string\ object\ passed\ to\ it,\ so\ it's\ OK\ to\ use\ 'a'\ later,\ when\ the}}
+\DoxyCodeLine{00814\ \ \ \textcolor{comment}{//\ temporary\ object\ has\ already\ died.}}
+\DoxyCodeLine{00815\ \ \ EXPECT\_TRUE(a.Perform(std::make\_tuple(\&ByConstRef)));}
+\DoxyCodeLine{00816\ \}}
+\DoxyCodeLine{00817\ }
+\DoxyCodeLine{00818\ \textcolor{comment}{//\ Tests\ using\ InvokeArgument\ with\ ByRef()\ and\ a\ function\ that\ takes\ a}}
+\DoxyCodeLine{00819\ \textcolor{comment}{//\ const\ reference.}}
+\DoxyCodeLine{00820\ TEST(InvokeArgumentTest,\ ByExplicitConstReferenceFunction)\ \{}
+\DoxyCodeLine{00821\ \ \ Action<bool(\textcolor{keywordtype}{bool}\ (*)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ x))>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00822\ \ \ \ \ \ \ InvokeArgument<0>(ByRef(g\_double));}
+\DoxyCodeLine{00823\ \ \ \textcolor{comment}{//\ The\ above\ line\ calls\ ByRef()\ on\ a\ const\ value.}}
+\DoxyCodeLine{00824\ \ \ EXPECT\_TRUE(a.Perform(std::make\_tuple(\&ReferencesGlobalDouble)));}
+\DoxyCodeLine{00825\ }
+\DoxyCodeLine{00826\ \ \ \textcolor{keywordtype}{double}\ x\ =\ 0;}
+\DoxyCodeLine{00827\ \ \ a\ =\ InvokeArgument<0>(ByRef(x));\ \ \textcolor{comment}{//\ This\ calls\ ByRef()\ on\ a\ non-\/const.}}
+\DoxyCodeLine{00828\ \ \ EXPECT\_FALSE(a.Perform(std::make\_tuple(\&ReferencesGlobalDouble)));}
+\DoxyCodeLine{00829\ \}}
+\DoxyCodeLine{00830\ }
+\DoxyCodeLine{00831\ TEST(InvokeArgumentTest,\ MoveOnlyType)\ \{}
+\DoxyCodeLine{00832\ \ \ \textcolor{keyword}{struct\ }Marker\ \{\};}
+\DoxyCodeLine{00833\ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00834\ \ \ \ \ \textcolor{comment}{//\ Method\ takes\ a\ unique\_ptr\ (to\ a\ type\ we\ don't\ care\ about),\ and\ an}}
+\DoxyCodeLine{00835\ \ \ \ \ \textcolor{comment}{//\ invocable\ type.}}
+\DoxyCodeLine{00836\ \ \ \ \ MOCK\_METHOD(\textcolor{keywordtype}{bool},\ MockMethod,}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (std::unique\_ptr<Marker>,\ std::function<\textcolor{keywordtype}{int}()>),\ ());}
+\DoxyCodeLine{00838\ \ \ \}\ mock;}
+\DoxyCodeLine{00839\ }
+\DoxyCodeLine{00840\ \ \ ON\_CALL(mock,\ MockMethod(\_,\ \_)).WillByDefault(InvokeArgument<1>());}
+\DoxyCodeLine{00841\ }
+\DoxyCodeLine{00842\ \ \ \textcolor{comment}{//\ This\ compiles,\ but\ is\ a\ little\ opaque\ as\ a\ workaround:}}
+\DoxyCodeLine{00843\ \ \ ON\_CALL(mock,\ MockMethod(\_,\ \_))}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ .WillByDefault(WithArg<1>(InvokeArgument<0>()));}
+\DoxyCodeLine{00845\ \}}
+\DoxyCodeLine{00846\ }
+\DoxyCodeLine{00847\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2).}}
+\DoxyCodeLine{00848\ TEST(DoAllTest,\ TwoActions)\ \{}
+\DoxyCodeLine{00849\ \ \ \textcolor{keywordtype}{int}\ n\ =\ 0;}
+\DoxyCodeLine{00850\ \ \ Action<int(\textcolor{keywordtype}{int}*)>\ a\ =\ DoAll(SetArgPointee<0>(1),\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Return(2));}
+\DoxyCodeLine{00852\ \ \ EXPECT\_EQ(2,\ a.Perform(std::make\_tuple(\&n)));}
+\DoxyCodeLine{00853\ \ \ EXPECT\_EQ(1,\ n);}
+\DoxyCodeLine{00854\ \}}
+\DoxyCodeLine{00855\ }
+\DoxyCodeLine{00856\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2,\ a3).}}
+\DoxyCodeLine{00857\ TEST(DoAllTest,\ ThreeActions)\ \{}
+\DoxyCodeLine{00858\ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0,\ n\ =\ 0;}
+\DoxyCodeLine{00859\ \ \ Action<int(\textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{int}*)>\ a\ =\ DoAll(SetArgPointee<0>(1),\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00860\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<1>(2),\ Return(3));}
+\DoxyCodeLine{00861\ \ \ EXPECT\_EQ(3,\ a.Perform(std::make\_tuple(\&m,\ \&n)));}
+\DoxyCodeLine{00862\ \ \ EXPECT\_EQ(1,\ m);}
+\DoxyCodeLine{00863\ \ \ EXPECT\_EQ(2,\ n);}
+\DoxyCodeLine{00864\ \}}
+\DoxyCodeLine{00865\ }
+\DoxyCodeLine{00866\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2,\ a3,\ a4).}}
+\DoxyCodeLine{00867\ TEST(DoAllTest,\ FourActions)\ \{}
+\DoxyCodeLine{00868\ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0,\ n\ =\ 0;}
+\DoxyCodeLine{00869\ \ \ \textcolor{keywordtype}{char}\ ch\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00870\ \ \ Action<int(\textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{char}*)>\ a\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00871\ \ \ \ \ \ \ DoAll(SetArgPointee<0>(1),\ SetArgPointee<1>(2),\ SetArgPointee<2>(\textcolor{charliteral}{'a'}),}
+\DoxyCodeLine{00872\ \ \ \ \ \ \ \ \ \ \ \ \ Return(3));}
+\DoxyCodeLine{00873\ \ \ EXPECT\_EQ(3,\ a.Perform(std::make\_tuple(\&m,\ \&n,\ \&ch)));}
+\DoxyCodeLine{00874\ \ \ EXPECT\_EQ(1,\ m);}
+\DoxyCodeLine{00875\ \ \ EXPECT\_EQ(2,\ n);}
+\DoxyCodeLine{00876\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ ch);}
+\DoxyCodeLine{00877\ \}}
+\DoxyCodeLine{00878\ }
+\DoxyCodeLine{00879\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2,\ a3,\ a4,\ a5).}}
+\DoxyCodeLine{00880\ TEST(DoAllTest,\ FiveActions)\ \{}
+\DoxyCodeLine{00881\ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0,\ n\ =\ 0;}
+\DoxyCodeLine{00882\ \ \ \textcolor{keywordtype}{char}\ a\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ b\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00883\ \ \ Action<int(\textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*)>\ action\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00884\ \ \ \ \ \ \ DoAll(SetArgPointee<0>(1),\ SetArgPointee<1>(2),\ SetArgPointee<2>(\textcolor{charliteral}{'a'}),}
+\DoxyCodeLine{00885\ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<3>(\textcolor{charliteral}{'b'}),\ Return(3));}
+\DoxyCodeLine{00886\ \ \ EXPECT\_EQ(3,\ action.Perform(std::make\_tuple(\&m,\ \&n,\ \&a,\ \&b)));}
+\DoxyCodeLine{00887\ \ \ EXPECT\_EQ(1,\ m);}
+\DoxyCodeLine{00888\ \ \ EXPECT\_EQ(2,\ n);}
+\DoxyCodeLine{00889\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ a);}
+\DoxyCodeLine{00890\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'b'},\ b);}
+\DoxyCodeLine{00891\ \}}
+\DoxyCodeLine{00892\ }
+\DoxyCodeLine{00893\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2,\ ...,\ a6).}}
+\DoxyCodeLine{00894\ TEST(DoAllTest,\ SixActions)\ \{}
+\DoxyCodeLine{00895\ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0,\ n\ =\ 0;}
+\DoxyCodeLine{00896\ \ \ \textcolor{keywordtype}{char}\ a\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ b\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ c\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00897\ \ \ Action<int(\textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*)>\ action\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ DoAll(SetArgPointee<0>(1),\ SetArgPointee<1>(2),\ SetArgPointee<2>(\textcolor{charliteral}{'a'}),}
+\DoxyCodeLine{00899\ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<3>(\textcolor{charliteral}{'b'}),\ SetArgPointee<4>(\textcolor{charliteral}{'c'}),\ Return(3));}
+\DoxyCodeLine{00900\ \ \ EXPECT\_EQ(3,\ action.Perform(std::make\_tuple(\&m,\ \&n,\ \&a,\ \&b,\ \&c)));}
+\DoxyCodeLine{00901\ \ \ EXPECT\_EQ(1,\ m);}
+\DoxyCodeLine{00902\ \ \ EXPECT\_EQ(2,\ n);}
+\DoxyCodeLine{00903\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ a);}
+\DoxyCodeLine{00904\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'b'},\ b);}
+\DoxyCodeLine{00905\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'c'},\ c);}
+\DoxyCodeLine{00906\ \}}
+\DoxyCodeLine{00907\ }
+\DoxyCodeLine{00908\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2,\ ...,\ a7).}}
+\DoxyCodeLine{00909\ TEST(DoAllTest,\ SevenActions)\ \{}
+\DoxyCodeLine{00910\ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0,\ n\ =\ 0;}
+\DoxyCodeLine{00911\ \ \ \textcolor{keywordtype}{char}\ a\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ b\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ c\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ d\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00912\ \ \ Action<int(\textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*)>\ action\ =\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ DoAll(SetArgPointee<0>(1),\ SetArgPointee<1>(2),\ SetArgPointee<2>(\textcolor{charliteral}{'a'}),}
+\DoxyCodeLine{00914\ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<3>(\textcolor{charliteral}{'b'}),\ SetArgPointee<4>(\textcolor{charliteral}{'c'}),\ SetArgPointee<5>(\textcolor{charliteral}{'d'}),}
+\DoxyCodeLine{00915\ \ \ \ \ \ \ \ \ \ \ \ \ Return(3));}
+\DoxyCodeLine{00916\ \ \ EXPECT\_EQ(3,\ action.Perform(std::make\_tuple(\&m,\ \&n,\ \&a,\ \&b,\ \&c,\ \&d)));}
+\DoxyCodeLine{00917\ \ \ EXPECT\_EQ(1,\ m);}
+\DoxyCodeLine{00918\ \ \ EXPECT\_EQ(2,\ n);}
+\DoxyCodeLine{00919\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ a);}
+\DoxyCodeLine{00920\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'b'},\ b);}
+\DoxyCodeLine{00921\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'c'},\ c);}
+\DoxyCodeLine{00922\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'d'},\ d);}
+\DoxyCodeLine{00923\ \}}
+\DoxyCodeLine{00924\ }
+\DoxyCodeLine{00925\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2,\ ...,\ a8).}}
+\DoxyCodeLine{00926\ TEST(DoAllTest,\ EightActions)\ \{}
+\DoxyCodeLine{00927\ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0,\ n\ =\ 0;}
+\DoxyCodeLine{00928\ \ \ \textcolor{keywordtype}{char}\ a\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ b\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ c\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ d\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ e\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00929\ \ \ Action<int(\textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00930\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00931\ \ \ \ \ \ \ action\ =}
+\DoxyCodeLine{00932\ \ \ \ \ \ \ \ \ \ \ DoAll(SetArgPointee<0>(1),\ SetArgPointee<1>(2),\ SetArgPointee<2>(\textcolor{charliteral}{'a'}),}
+\DoxyCodeLine{00933\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<3>(\textcolor{charliteral}{'b'}),\ SetArgPointee<4>(\textcolor{charliteral}{'c'}),}
+\DoxyCodeLine{00934\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<5>(\textcolor{charliteral}{'d'}),\ SetArgPointee<6>(\textcolor{charliteral}{'e'}),\ Return(3));}
+\DoxyCodeLine{00935\ \ \ EXPECT\_EQ(3,\ action.Perform(std::make\_tuple(\&m,\ \&n,\ \&a,\ \&b,\ \&c,\ \&d,\ \&e)));}
+\DoxyCodeLine{00936\ \ \ EXPECT\_EQ(1,\ m);}
+\DoxyCodeLine{00937\ \ \ EXPECT\_EQ(2,\ n);}
+\DoxyCodeLine{00938\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ a);}
+\DoxyCodeLine{00939\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'b'},\ b);}
+\DoxyCodeLine{00940\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'c'},\ c);}
+\DoxyCodeLine{00941\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'d'},\ d);}
+\DoxyCodeLine{00942\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'e'},\ e);}
+\DoxyCodeLine{00943\ \}}
+\DoxyCodeLine{00944\ }
+\DoxyCodeLine{00945\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2,\ ...,\ a9).}}
+\DoxyCodeLine{00946\ TEST(DoAllTest,\ NineActions)\ \{}
+\DoxyCodeLine{00947\ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0,\ n\ =\ 0;}
+\DoxyCodeLine{00948\ \ \ \textcolor{keywordtype}{char}\ a\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ b\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ c\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ d\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ e\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ f\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00949\ \ \ Action<int(\textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00950\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00951\ \ \ \ \ \ \ action\ =\ DoAll(SetArgPointee<0>(1),\ SetArgPointee<1>(2),}
+\DoxyCodeLine{00952\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<2>(\textcolor{charliteral}{'a'}),\ SetArgPointee<3>(\textcolor{charliteral}{'b'}),}
+\DoxyCodeLine{00953\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<4>(\textcolor{charliteral}{'c'}),\ SetArgPointee<5>(\textcolor{charliteral}{'d'}),}
+\DoxyCodeLine{00954\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<6>(\textcolor{charliteral}{'e'}),\ SetArgPointee<7>(\textcolor{charliteral}{'f'}),\ Return(3));}
+\DoxyCodeLine{00955\ \ \ EXPECT\_EQ(3,\ action.Perform(std::make\_tuple(\&m,\ \&n,\ \&a,\ \&b,\ \&c,\ \&d,\ \&e,\ \&f)));}
+\DoxyCodeLine{00956\ \ \ EXPECT\_EQ(1,\ m);}
+\DoxyCodeLine{00957\ \ \ EXPECT\_EQ(2,\ n);}
+\DoxyCodeLine{00958\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ a);}
+\DoxyCodeLine{00959\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'b'},\ b);}
+\DoxyCodeLine{00960\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'c'},\ c);}
+\DoxyCodeLine{00961\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'d'},\ d);}
+\DoxyCodeLine{00962\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'e'},\ e);}
+\DoxyCodeLine{00963\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'f'},\ f);}
+\DoxyCodeLine{00964\ \}}
+\DoxyCodeLine{00965\ }
+\DoxyCodeLine{00966\ \textcolor{comment}{//\ Tests\ DoAll(a1,\ a2,\ ...,\ a10).}}
+\DoxyCodeLine{00967\ TEST(DoAllTest,\ TenActions)\ \{}
+\DoxyCodeLine{00968\ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0,\ n\ =\ 0;}
+\DoxyCodeLine{00969\ \ \ \textcolor{keywordtype}{char}\ a\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ b\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ c\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ d\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00970\ \ \ \textcolor{keywordtype}{char}\ e\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ f\ =\ \textcolor{charliteral}{'\(\backslash\)0'},\ g\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00971\ \ \ Action<int(\textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{int}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00972\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*,\ \textcolor{keywordtype}{char}*)>}
+\DoxyCodeLine{00973\ \ \ \ \ \ \ action\ =}
+\DoxyCodeLine{00974\ \ \ \ \ \ \ \ \ \ \ DoAll(SetArgPointee<0>(1),\ SetArgPointee<1>(2),\ SetArgPointee<2>(\textcolor{charliteral}{'a'}),}
+\DoxyCodeLine{00975\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<3>(\textcolor{charliteral}{'b'}),\ SetArgPointee<4>(\textcolor{charliteral}{'c'}),}
+\DoxyCodeLine{00976\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<5>(\textcolor{charliteral}{'d'}),\ SetArgPointee<6>(\textcolor{charliteral}{'e'}),}
+\DoxyCodeLine{00977\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SetArgPointee<7>(\textcolor{charliteral}{'f'}),\ SetArgPointee<8>(\textcolor{charliteral}{'g'}),\ Return(3));}
+\DoxyCodeLine{00978\ \ \ EXPECT\_EQ(}
+\DoxyCodeLine{00979\ \ \ \ \ \ \ 3,\ action.Perform(std::make\_tuple(\&m,\ \&n,\ \&a,\ \&b,\ \&c,\ \&d,\ \&e,\ \&f,\ \&g)));}
+\DoxyCodeLine{00980\ \ \ EXPECT\_EQ(1,\ m);}
+\DoxyCodeLine{00981\ \ \ EXPECT\_EQ(2,\ n);}
+\DoxyCodeLine{00982\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'a'},\ a);}
+\DoxyCodeLine{00983\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'b'},\ b);}
+\DoxyCodeLine{00984\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'c'},\ c);}
+\DoxyCodeLine{00985\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'d'},\ d);}
+\DoxyCodeLine{00986\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'e'},\ e);}
+\DoxyCodeLine{00987\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'f'},\ f);}
+\DoxyCodeLine{00988\ \ \ EXPECT\_EQ(\textcolor{charliteral}{'g'},\ g);}
+\DoxyCodeLine{00989\ \}}
+\DoxyCodeLine{00990\ }
+\DoxyCodeLine{00991\ TEST(DoAllTest,\ NoArgs)\ \{}
+\DoxyCodeLine{00992\ \ \ \textcolor{keywordtype}{bool}\ ran\_first\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00993\ \ \ Action<bool()>\ a\ =}
+\DoxyCodeLine{00994\ \ \ \ \ \ \ DoAll([\&]\ \{\ ran\_first\ =\ \textcolor{keyword}{true};\ \},\ [\&]\ \{\ \textcolor{keywordflow}{return}\ ran\_first;\ \});}
+\DoxyCodeLine{00995\ \ \ EXPECT\_TRUE(a.Perform(\{\}));}
+\DoxyCodeLine{00996\ \}}
+\DoxyCodeLine{00997\ }
+\DoxyCodeLine{00998\ TEST(DoAllTest,\ MoveOnlyArgs)\ \{}
+\DoxyCodeLine{00999\ \ \ \textcolor{keywordtype}{bool}\ ran\_first\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01000\ \ \ Action<int(std::unique\_ptr<int>)>\ a\ =}
+\DoxyCodeLine{01001\ \ \ \ \ \ \ DoAll(InvokeWithoutArgs([\&]\ \{\ ran\_first\ =\ \textcolor{keyword}{true};\ \}),}
+\DoxyCodeLine{01002\ \ \ \ \ \ \ \ \ \ \ \ \ [](std::unique\_ptr<int>\ p)\ \{\ \textcolor{keywordflow}{return}\ *p;\ \});}
+\DoxyCodeLine{01003\ \ \ EXPECT\_EQ(7,\ a.Perform(std::make\_tuple(std::unique\_ptr<int>(\textcolor{keyword}{new}\ \textcolor{keywordtype}{int}(7)))));}
+\DoxyCodeLine{01004\ \ \ EXPECT\_TRUE(ran\_first);}
+\DoxyCodeLine{01005\ \}}
+\DoxyCodeLine{01006\ }
+\DoxyCodeLine{01007\ TEST(DoAllTest,\ ImplicitlyConvertsActionArguments)\ \{}
+\DoxyCodeLine{01008\ \ \ \textcolor{keywordtype}{bool}\ ran\_first\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01009\ \ \ \textcolor{comment}{//\ Action<void(std::vector<int>)>\ isn't\ an}}
+\DoxyCodeLine{01010\ \ \ \textcolor{comment}{//\ Action<void(const\ std::vector<int>\&)\ but\ can\ be\ converted.}}
+\DoxyCodeLine{01011\ \ \ Action<void(std::vector<int>)>\ first\ =\ [\&]\ \{\ ran\_first\ =\ \textcolor{keyword}{true};\ \};}
+\DoxyCodeLine{01012\ \ \ Action<int(std::vector<int>)>\ a\ =}
+\DoxyCodeLine{01013\ \ \ \ \ \ \ DoAll(first,\ [](std::vector<int>\ arg)\ \{\ \textcolor{keywordflow}{return}\ arg.front();\ \});}
+\DoxyCodeLine{01014\ \ \ EXPECT\_EQ(7,\ a.Perform(std::make\_tuple(std::vector<int>\{7\})));}
+\DoxyCodeLine{01015\ \ \ EXPECT\_TRUE(ran\_first);}
+\DoxyCodeLine{01016\ \}}
+\DoxyCodeLine{01017\ }
+\DoxyCodeLine{01018\ \textcolor{comment}{//\ The\ ACTION*()\ macros\ trigger\ warning\ C4100\ (unreferenced\ formal}}
+\DoxyCodeLine{01019\ \textcolor{comment}{//\ parameter)\ in\ MSVC\ with\ -\/W4.\ \ Unfortunately\ they\ cannot\ be\ fixed\ in}}
+\DoxyCodeLine{01020\ \textcolor{comment}{//\ the\ macro\ definition,\ as\ the\ warnings\ are\ generated\ when\ the\ macro}}
+\DoxyCodeLine{01021\ \textcolor{comment}{//\ is\ expanded\ and\ macro\ expansion\ cannot\ contain\ \#pragma.\ \ Therefore}}
+\DoxyCodeLine{01022\ \textcolor{comment}{//\ we\ suppress\ them\ here.}}
+\DoxyCodeLine{01023\ \textcolor{comment}{//\ Also\ suppress\ C4503\ decorated\ name\ length\ exceeded,\ name\ was\ truncated}}
+\DoxyCodeLine{01024\ GTEST\_DISABLE\_MSC\_WARNINGS\_PUSH\_(4100\ 4503)}
+\DoxyCodeLine{01025\ \textcolor{comment}{//\ Tests\ the\ ACTION*()\ macro\ family.}}
+\DoxyCodeLine{01026\ }
+\DoxyCodeLine{01027\ \textcolor{comment}{//\ Tests\ that\ ACTION()\ can\ define\ an\ action\ that\ doesn't\ reference\ the}}
+\DoxyCodeLine{01028\ \textcolor{comment}{//\ mock\ function\ arguments.}}
+\DoxyCodeLine{01029\ ACTION(Return5)\ \{\ \textcolor{keywordflow}{return}\ 5;\ \}}
+\DoxyCodeLine{01030\ }
+\DoxyCodeLine{01031\ TEST(ActionMacroTest,\ WorksWhenNotReferencingArguments)\ \{}
+\DoxyCodeLine{01032\ \ \ Action<double()>\ a1\ =\ Return5();}
+\DoxyCodeLine{01033\ \ \ EXPECT\_DOUBLE\_EQ(5,\ a1.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01034\ }
+\DoxyCodeLine{01035\ \ \ Action<int(\textcolor{keywordtype}{double},\ \textcolor{keywordtype}{bool})>\ a2\ =\ Return5();}
+\DoxyCodeLine{01036\ \ \ EXPECT\_EQ(5,\ a2.Perform(std::make\_tuple(1,\ \textcolor{keyword}{true})));}
+\DoxyCodeLine{01037\ \}}
+\DoxyCodeLine{01038\ }
+\DoxyCodeLine{01039\ \textcolor{comment}{//\ Tests\ that\ ACTION()\ can\ define\ an\ action\ that\ returns\ void.}}
+\DoxyCodeLine{01040\ ACTION(IncrementArg1)\ \{\ (*arg1)++;\ \}}
+\DoxyCodeLine{01041\ }
+\DoxyCodeLine{01042\ TEST(ActionMacroTest,\ WorksWhenReturningVoid)\ \{}
+\DoxyCodeLine{01043\ \ \ Action<void(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}*)>\ a1\ =\ IncrementArg1();}
+\DoxyCodeLine{01044\ \ \ \textcolor{keywordtype}{int}\ n\ =\ 0;}
+\DoxyCodeLine{01045\ \ \ a1.Perform(std::make\_tuple(5,\ \&n));}
+\DoxyCodeLine{01046\ \ \ EXPECT\_EQ(1,\ n);}
+\DoxyCodeLine{01047\ \}}
+\DoxyCodeLine{01048\ }
+\DoxyCodeLine{01049\ \textcolor{comment}{//\ Tests\ that\ the\ body\ of\ ACTION()\ can\ reference\ the\ type\ of\ the}}
+\DoxyCodeLine{01050\ \textcolor{comment}{//\ argument.}}
+\DoxyCodeLine{01051\ ACTION(IncrementArg2)\ \{}
+\DoxyCodeLine{01052\ \ \ StaticAssertTypeEq<int*,\ arg2\_type>();}
+\DoxyCodeLine{01053\ \ \ arg2\_type\ temp\ =\ arg2;}
+\DoxyCodeLine{01054\ \ \ (*temp)++;}
+\DoxyCodeLine{01055\ \}}
+\DoxyCodeLine{01056\ }
+\DoxyCodeLine{01057\ TEST(ActionMacroTest,\ CanReferenceArgumentType)\ \{}
+\DoxyCodeLine{01058\ \ \ Action<void(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{bool},\ \textcolor{keywordtype}{int}*)>\ a1\ =\ IncrementArg2();}
+\DoxyCodeLine{01059\ \ \ \textcolor{keywordtype}{int}\ n\ =\ 0;}
+\DoxyCodeLine{01060\ \ \ a1.Perform(std::make\_tuple(5,\ \textcolor{keyword}{false},\ \&n));}
+\DoxyCodeLine{01061\ \ \ EXPECT\_EQ(1,\ n);}
+\DoxyCodeLine{01062\ \}}
+\DoxyCodeLine{01063\ }
+\DoxyCodeLine{01064\ \textcolor{comment}{//\ Tests\ that\ the\ body\ of\ ACTION()\ can\ reference\ the\ argument\ tuple}}
+\DoxyCodeLine{01065\ \textcolor{comment}{//\ via\ args\_type\ and\ args.}}
+\DoxyCodeLine{01066\ ACTION(Sum2)\ \{}
+\DoxyCodeLine{01067\ \ \ StaticAssertTypeEq<std::tuple<int,\ char,\ int*>,\ args\_type>();}
+\DoxyCodeLine{01068\ \ \ args\_type\ args\_copy\ =\ args;}
+\DoxyCodeLine{01069\ \ \ \textcolor{keywordflow}{return}\ std::get<0>(args\_copy)\ +\ std::get<1>(args\_copy);}
+\DoxyCodeLine{01070\ \}}
+\DoxyCodeLine{01071\ }
+\DoxyCodeLine{01072\ TEST(ActionMacroTest,\ CanReferenceArgumentTuple)\ \{}
+\DoxyCodeLine{01073\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{char},\ \textcolor{keywordtype}{int}*)>\ a1\ =\ Sum2();}
+\DoxyCodeLine{01074\ \ \ \textcolor{keywordtype}{int}\ dummy\ =\ 0;}
+\DoxyCodeLine{01075\ \ \ EXPECT\_EQ(11,\ a1.Perform(std::make\_tuple(5,\ Char(6),\ \&dummy)));}
+\DoxyCodeLine{01076\ \}}
+\DoxyCodeLine{01077\ }
+\DoxyCodeLine{01078\ \textcolor{keyword}{namespace\ }\{}
+\DoxyCodeLine{01079\ }
+\DoxyCodeLine{01080\ \textcolor{comment}{//\ Tests\ that\ the\ body\ of\ ACTION()\ can\ reference\ the\ mock\ function}}
+\DoxyCodeLine{01081\ \textcolor{comment}{//\ type.}}
+\DoxyCodeLine{01082\ \textcolor{keywordtype}{int}\ Dummy(\textcolor{keywordtype}{bool}\ flag)\ \{\ \textcolor{keywordflow}{return}\ flag\ ?\ 1\ :\ 0;\ \}}
+\DoxyCodeLine{01083\ }
+\DoxyCodeLine{01084\ \}\ \ \textcolor{comment}{//\ namespace}}
+\DoxyCodeLine{01085\ }
+\DoxyCodeLine{01086\ ACTION(InvokeDummy)\ \{}
+\DoxyCodeLine{01087\ \ \ StaticAssertTypeEq<int(bool),\ function\_type>();}
+\DoxyCodeLine{01088\ \ \ function\_type*\ fp\ =\ \&Dummy;}
+\DoxyCodeLine{01089\ \ \ \textcolor{keywordflow}{return}\ (*fp)(\textcolor{keyword}{true});}
+\DoxyCodeLine{01090\ \}}
+\DoxyCodeLine{01091\ }
+\DoxyCodeLine{01092\ TEST(ActionMacroTest,\ CanReferenceMockFunctionType)\ \{}
+\DoxyCodeLine{01093\ \ \ Action<int(\textcolor{keywordtype}{bool})>\ a1\ =\ InvokeDummy();}
+\DoxyCodeLine{01094\ \ \ EXPECT\_EQ(1,\ a1.Perform(std::make\_tuple(\textcolor{keyword}{true})));}
+\DoxyCodeLine{01095\ \ \ EXPECT\_EQ(1,\ a1.Perform(std::make\_tuple(\textcolor{keyword}{false})));}
+\DoxyCodeLine{01096\ \}}
+\DoxyCodeLine{01097\ }
+\DoxyCodeLine{01098\ \textcolor{comment}{//\ Tests\ that\ the\ body\ of\ ACTION()\ can\ reference\ the\ mock\ function's}}
+\DoxyCodeLine{01099\ \textcolor{comment}{//\ return\ type.}}
+\DoxyCodeLine{01100\ ACTION(InvokeDummy2)\ \{}
+\DoxyCodeLine{01101\ \ \ StaticAssertTypeEq<int,\ return\_type>();}
+\DoxyCodeLine{01102\ \ \ return\_type\ result\ =\ Dummy(\textcolor{keyword}{true});}
+\DoxyCodeLine{01103\ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{01104\ \}}
+\DoxyCodeLine{01105\ }
+\DoxyCodeLine{01106\ TEST(ActionMacroTest,\ CanReferenceMockFunctionReturnType)\ \{}
+\DoxyCodeLine{01107\ \ \ Action<int(\textcolor{keywordtype}{bool})>\ a1\ =\ InvokeDummy2();}
+\DoxyCodeLine{01108\ \ \ EXPECT\_EQ(1,\ a1.Perform(std::make\_tuple(\textcolor{keyword}{true})));}
+\DoxyCodeLine{01109\ \ \ EXPECT\_EQ(1,\ a1.Perform(std::make\_tuple(\textcolor{keyword}{false})));}
+\DoxyCodeLine{01110\ \}}
+\DoxyCodeLine{01111\ }
+\DoxyCodeLine{01112\ \textcolor{comment}{//\ Tests\ that\ ACTION()\ works\ for\ arguments\ passed\ by\ const\ reference.}}
+\DoxyCodeLine{01113\ ACTION(ReturnAddrOfConstBoolReferenceArg)\ \{}
+\DoxyCodeLine{01114\ \ \ StaticAssertTypeEq<const\ bool\&,\ arg1\_type>();}
+\DoxyCodeLine{01115\ \ \ \textcolor{keywordflow}{return}\ \&arg1;}
+\DoxyCodeLine{01116\ \}}
+\DoxyCodeLine{01117\ }
+\DoxyCodeLine{01118\ TEST(ActionMacroTest,\ WorksForConstReferenceArg)\ \{}
+\DoxyCodeLine{01119\ \ \ Action<\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}*(int,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\&)>\ a\ =\ ReturnAddrOfConstBoolReferenceArg();}
+\DoxyCodeLine{01120\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ b\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01121\ \ \ EXPECT\_EQ(\&b,\ a.Perform(std::tuple<int,\ const\ bool\&>(0,\ b)));}
+\DoxyCodeLine{01122\ \}}
+\DoxyCodeLine{01123\ }
+\DoxyCodeLine{01124\ \textcolor{comment}{//\ Tests\ that\ ACTION()\ works\ for\ arguments\ passed\ by\ non-\/const\ reference.}}
+\DoxyCodeLine{01125\ ACTION(ReturnAddrOfIntReferenceArg)\ \{}
+\DoxyCodeLine{01126\ \ \ StaticAssertTypeEq<int\&,\ arg0\_type>();}
+\DoxyCodeLine{01127\ \ \ \textcolor{keywordflow}{return}\ \&arg0;}
+\DoxyCodeLine{01128\ \}}
+\DoxyCodeLine{01129\ }
+\DoxyCodeLine{01130\ TEST(ActionMacroTest,\ WorksForNonConstReferenceArg)\ \{}
+\DoxyCodeLine{01131\ \ \ Action<\textcolor{keywordtype}{int}*(\textcolor{keywordtype}{int}\&,\ bool,\ int)>\ a\ =\ ReturnAddrOfIntReferenceArg();}
+\DoxyCodeLine{01132\ \ \ \textcolor{keywordtype}{int}\ n\ =\ 0;}
+\DoxyCodeLine{01133\ \ \ EXPECT\_EQ(\&n,\ a.Perform(std::tuple<int\&,\ bool,\ int>(n,\ \textcolor{keyword}{true},\ 1)));}
+\DoxyCodeLine{01134\ \}}
+\DoxyCodeLine{01135\ }
+\DoxyCodeLine{01136\ \textcolor{comment}{//\ Tests\ that\ ACTION()\ can\ be\ used\ in\ a\ namespace.}}
+\DoxyCodeLine{01137\ \textcolor{keyword}{namespace\ }action\_test\ \{}
+\DoxyCodeLine{01138\ ACTION(Sum)\ \{\ \textcolor{keywordflow}{return}\ arg0\ +\ arg1;\ \}}
+\DoxyCodeLine{01139\ \}\ \ \textcolor{comment}{//\ namespace\ action\_test}}
+\DoxyCodeLine{01140\ }
+\DoxyCodeLine{01141\ TEST(ActionMacroTest,\ WorksInNamespace)\ \{}
+\DoxyCodeLine{01142\ \ \ Action<int(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int})>\ a1\ =\ action\_test::Sum();}
+\DoxyCodeLine{01143\ \ \ EXPECT\_EQ(3,\ a1.Perform(std::make\_tuple(1,\ 2)));}
+\DoxyCodeLine{01144\ \}}
+\DoxyCodeLine{01145\ }
+\DoxyCodeLine{01146\ \textcolor{comment}{//\ Tests\ that\ the\ same\ ACTION\ definition\ works\ for\ mock\ functions\ with}}
+\DoxyCodeLine{01147\ \textcolor{comment}{//\ different\ argument\ numbers.}}
+\DoxyCodeLine{01148\ ACTION(PlusTwo)\ \{\ \textcolor{keywordflow}{return}\ arg0\ +\ 2;\ \}}
+\DoxyCodeLine{01149\ }
+\DoxyCodeLine{01150\ TEST(ActionMacroTest,\ WorksForDifferentArgumentNumbers)\ \{}
+\DoxyCodeLine{01151\ \ \ Action<int(\textcolor{keywordtype}{int})>\ a1\ =\ PlusTwo();}
+\DoxyCodeLine{01152\ \ \ EXPECT\_EQ(4,\ a1.Perform(std::make\_tuple(2)));}
+\DoxyCodeLine{01153\ }
+\DoxyCodeLine{01154\ \ \ Action<double(\textcolor{keywordtype}{float},\ \textcolor{keywordtype}{void}*)>\ a2\ =\ PlusTwo();}
+\DoxyCodeLine{01155\ \ \ \textcolor{keywordtype}{int}\ dummy;}
+\DoxyCodeLine{01156\ \ \ EXPECT\_DOUBLE\_EQ(6,\ a2.Perform(std::make\_tuple(4.0f,\ \&dummy)));}
+\DoxyCodeLine{01157\ \}}
+\DoxyCodeLine{01158\ }
+\DoxyCodeLine{01159\ \textcolor{comment}{//\ Tests\ that\ ACTION\_P\ can\ define\ a\ parameterized\ action.}}
+\DoxyCodeLine{01160\ ACTION\_P(Plus,\ n)\ \{\ \textcolor{keywordflow}{return}\ arg0\ +\ n;\ \}}
+\DoxyCodeLine{01161\ }
+\DoxyCodeLine{01162\ TEST(ActionPMacroTest,\ DefinesParameterizedAction)\ \{}
+\DoxyCodeLine{01163\ \ \ Action<int(\textcolor{keywordtype}{int}\ m,\ \textcolor{keywordtype}{bool}\ t)>\ a1\ =\ Plus(9);}
+\DoxyCodeLine{01164\ \ \ EXPECT\_EQ(10,\ a1.Perform(std::make\_tuple(1,\ \textcolor{keyword}{true})));}
+\DoxyCodeLine{01165\ \}}
+\DoxyCodeLine{01166\ }
+\DoxyCodeLine{01167\ \textcolor{comment}{//\ Tests\ that\ the\ body\ of\ ACTION\_P\ can\ reference\ the\ argument\ types}}
+\DoxyCodeLine{01168\ \textcolor{comment}{//\ and\ the\ parameter\ type.}}
+\DoxyCodeLine{01169\ ACTION\_P(TypedPlus,\ n)\ \{}
+\DoxyCodeLine{01170\ \ \ arg0\_type\ t1\ =\ arg0;}
+\DoxyCodeLine{01171\ \ \ n\_type\ t2\ =\ n;}
+\DoxyCodeLine{01172\ \ \ \textcolor{keywordflow}{return}\ t1\ +\ t2;}
+\DoxyCodeLine{01173\ \}}
+\DoxyCodeLine{01174\ }
+\DoxyCodeLine{01175\ TEST(ActionPMacroTest,\ CanReferenceArgumentAndParameterTypes)\ \{}
+\DoxyCodeLine{01176\ \ \ Action<int(\textcolor{keywordtype}{char}\ m,\ \textcolor{keywordtype}{bool}\ t)>\ a1\ =\ TypedPlus(9);}
+\DoxyCodeLine{01177\ \ \ EXPECT\_EQ(10,\ a1.Perform(std::make\_tuple(Char(1),\ \textcolor{keyword}{true})));}
+\DoxyCodeLine{01178\ \}}
+\DoxyCodeLine{01179\ }
+\DoxyCodeLine{01180\ \textcolor{comment}{//\ Tests\ that\ a\ parameterized\ action\ can\ be\ used\ in\ any\ mock\ function}}
+\DoxyCodeLine{01181\ \textcolor{comment}{//\ whose\ type\ is\ compatible.}}
+\DoxyCodeLine{01182\ TEST(ActionPMacroTest,\ WorksInCompatibleMockFunction)\ \{}
+\DoxyCodeLine{01183\ \ \ Action<std::string(\textcolor{keyword}{const}\ std::string\&\ s)>\ a1\ =\ Plus(\textcolor{stringliteral}{"{}tail"{}});}
+\DoxyCodeLine{01184\ \ \ \textcolor{keyword}{const}\ std::string\ re\ =\ \textcolor{stringliteral}{"{}re"{}};}
+\DoxyCodeLine{01185\ \ \ std::tuple<const\ std::string>\ dummy\ =\ std::make\_tuple(re);}
+\DoxyCodeLine{01186\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}retail"{}},\ a1.Perform(dummy));}
+\DoxyCodeLine{01187\ \}}
+\DoxyCodeLine{01188\ }
+\DoxyCodeLine{01189\ \textcolor{comment}{//\ Tests\ that\ we\ can\ use\ ACTION*()\ to\ define\ actions\ overloaded\ on\ the}}
+\DoxyCodeLine{01190\ \textcolor{comment}{//\ number\ of\ parameters.}}
+\DoxyCodeLine{01191\ }
+\DoxyCodeLine{01192\ ACTION(OverloadedAction)\ \{\ \textcolor{keywordflow}{return}\ arg0\ ?\ arg1\ :\ \textcolor{stringliteral}{"{}hello"{}};\ \}}
+\DoxyCodeLine{01193\ }
+\DoxyCodeLine{01194\ ACTION\_P(OverloadedAction,\ default\_value)\ \{}
+\DoxyCodeLine{01195\ \ \ \textcolor{keywordflow}{return}\ arg0\ ?\ arg1\ :\ default\_value;}
+\DoxyCodeLine{01196\ \}}
+\DoxyCodeLine{01197\ }
+\DoxyCodeLine{01198\ ACTION\_P2(OverloadedAction,\ true\_value,\ false\_value)\ \{}
+\DoxyCodeLine{01199\ \ \ \textcolor{keywordflow}{return}\ arg0\ ?\ true\_value\ :\ false\_value;}
+\DoxyCodeLine{01200\ \}}
+\DoxyCodeLine{01201\ }
+\DoxyCodeLine{01202\ TEST(ActionMacroTest,\ CanDefineOverloadedActions)\ \{}
+\DoxyCodeLine{01203\ \ \ \textcolor{keyword}{using\ }MyAction\ =\ Action<\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*(bool,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>;}
+\DoxyCodeLine{01204\ }
+\DoxyCodeLine{01205\ \ \ \textcolor{keyword}{const}\ MyAction\ a1\ =\ OverloadedAction();}
+\DoxyCodeLine{01206\ \ \ EXPECT\_STREQ(\textcolor{stringliteral}{"{}hello"{}},\ a1.Perform(std::make\_tuple(\textcolor{keyword}{false},\ CharPtr(\textcolor{stringliteral}{"{}world"{}}))));}
+\DoxyCodeLine{01207\ \ \ EXPECT\_STREQ(\textcolor{stringliteral}{"{}world"{}},\ a1.Perform(std::make\_tuple(\textcolor{keyword}{true},\ CharPtr(\textcolor{stringliteral}{"{}world"{}}))));}
+\DoxyCodeLine{01208\ }
+\DoxyCodeLine{01209\ \ \ \textcolor{keyword}{const}\ MyAction\ a2\ =\ OverloadedAction(\textcolor{stringliteral}{"{}hi"{}});}
+\DoxyCodeLine{01210\ \ \ EXPECT\_STREQ(\textcolor{stringliteral}{"{}hi"{}},\ a2.Perform(std::make\_tuple(\textcolor{keyword}{false},\ CharPtr(\textcolor{stringliteral}{"{}world"{}}))));}
+\DoxyCodeLine{01211\ \ \ EXPECT\_STREQ(\textcolor{stringliteral}{"{}world"{}},\ a2.Perform(std::make\_tuple(\textcolor{keyword}{true},\ CharPtr(\textcolor{stringliteral}{"{}world"{}}))));}
+\DoxyCodeLine{01212\ }
+\DoxyCodeLine{01213\ \ \ \textcolor{keyword}{const}\ MyAction\ a3\ =\ OverloadedAction(\textcolor{stringliteral}{"{}hi"{}},\ \textcolor{stringliteral}{"{}you"{}});}
+\DoxyCodeLine{01214\ \ \ EXPECT\_STREQ(\textcolor{stringliteral}{"{}hi"{}},\ a3.Perform(std::make\_tuple(\textcolor{keyword}{true},\ CharPtr(\textcolor{stringliteral}{"{}world"{}}))));}
+\DoxyCodeLine{01215\ \ \ EXPECT\_STREQ(\textcolor{stringliteral}{"{}you"{}},\ a3.Perform(std::make\_tuple(\textcolor{keyword}{false},\ CharPtr(\textcolor{stringliteral}{"{}world"{}}))));}
+\DoxyCodeLine{01216\ \}}
+\DoxyCodeLine{01217\ }
+\DoxyCodeLine{01218\ \textcolor{comment}{//\ Tests\ ACTION\_Pn\ where\ n\ >=\ 3.}}
+\DoxyCodeLine{01219\ }
+\DoxyCodeLine{01220\ ACTION\_P3(Plus,\ m,\ n,\ k)\ \{\ \textcolor{keywordflow}{return}\ arg0\ +\ m\ +\ n\ +\ k;\ \}}
+\DoxyCodeLine{01221\ }
+\DoxyCodeLine{01222\ TEST(ActionPnMacroTest,\ WorksFor3Parameters)\ \{}
+\DoxyCodeLine{01223\ \ \ Action<double(\textcolor{keywordtype}{int}\ m,\ \textcolor{keywordtype}{bool}\ t)>\ a1\ =\ Plus(100,\ 20,\ 3.4);}
+\DoxyCodeLine{01224\ \ \ EXPECT\_DOUBLE\_EQ(3123.4,\ a1.Perform(std::make\_tuple(3000,\ \textcolor{keyword}{true})));}
+\DoxyCodeLine{01225\ }
+\DoxyCodeLine{01226\ \ \ Action<std::string(\textcolor{keyword}{const}\ std::string\&\ s)>\ a2\ =\ Plus(\textcolor{stringliteral}{"{}tail"{}},\ \textcolor{stringliteral}{"{}-\/"{}},\ \textcolor{stringliteral}{"{}>"{}});}
+\DoxyCodeLine{01227\ \ \ \textcolor{keyword}{const}\ std::string\ re\ =\ \textcolor{stringliteral}{"{}re"{}};}
+\DoxyCodeLine{01228\ \ \ std::tuple<const\ std::string>\ dummy\ =\ std::make\_tuple(re);}
+\DoxyCodeLine{01229\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}retail-\/>"{}},\ a2.Perform(dummy));}
+\DoxyCodeLine{01230\ \}}
+\DoxyCodeLine{01231\ }
+\DoxyCodeLine{01232\ ACTION\_P4(Plus,\ p0,\ p1,\ p2,\ p3)\ \{\ \textcolor{keywordflow}{return}\ arg0\ +\ p0\ +\ p1\ +\ p2\ +\ p3;\ \}}
+\DoxyCodeLine{01233\ }
+\DoxyCodeLine{01234\ TEST(ActionPnMacroTest,\ WorksFor4Parameters)\ \{}
+\DoxyCodeLine{01235\ \ \ Action<int(\textcolor{keywordtype}{int})>\ a1\ =\ Plus(1,\ 2,\ 3,\ 4);}
+\DoxyCodeLine{01236\ \ \ EXPECT\_EQ(10\ +\ 1\ +\ 2\ +\ 3\ +\ 4,\ a1.Perform(std::make\_tuple(10)));}
+\DoxyCodeLine{01237\ \}}
+\DoxyCodeLine{01238\ }
+\DoxyCodeLine{01239\ ACTION\_P5(Plus,\ p0,\ p1,\ p2,\ p3,\ p4)\ \{\ \textcolor{keywordflow}{return}\ arg0\ +\ p0\ +\ p1\ +\ p2\ +\ p3\ +\ p4;\ \}}
+\DoxyCodeLine{01240\ }
+\DoxyCodeLine{01241\ TEST(ActionPnMacroTest,\ WorksFor5Parameters)\ \{}
+\DoxyCodeLine{01242\ \ \ Action<int(\textcolor{keywordtype}{int})>\ a1\ =\ Plus(1,\ 2,\ 3,\ 4,\ 5);}
+\DoxyCodeLine{01243\ \ \ EXPECT\_EQ(10\ +\ 1\ +\ 2\ +\ 3\ +\ 4\ +\ 5,\ a1.Perform(std::make\_tuple(10)));}
+\DoxyCodeLine{01244\ \}}
+\DoxyCodeLine{01245\ }
+\DoxyCodeLine{01246\ ACTION\_P6(Plus,\ p0,\ p1,\ p2,\ p3,\ p4,\ p5)\ \{}
+\DoxyCodeLine{01247\ \ \ \textcolor{keywordflow}{return}\ arg0\ +\ p0\ +\ p1\ +\ p2\ +\ p3\ +\ p4\ +\ p5;}
+\DoxyCodeLine{01248\ \}}
+\DoxyCodeLine{01249\ }
+\DoxyCodeLine{01250\ TEST(ActionPnMacroTest,\ WorksFor6Parameters)\ \{}
+\DoxyCodeLine{01251\ \ \ Action<int(\textcolor{keywordtype}{int})>\ a1\ =\ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6);}
+\DoxyCodeLine{01252\ \ \ EXPECT\_EQ(10\ +\ 1\ +\ 2\ +\ 3\ +\ 4\ +\ 5\ +\ 6,\ a1.Perform(std::make\_tuple(10)));}
+\DoxyCodeLine{01253\ \}}
+\DoxyCodeLine{01254\ }
+\DoxyCodeLine{01255\ ACTION\_P7(Plus,\ p0,\ p1,\ p2,\ p3,\ p4,\ p5,\ p6)\ \{}
+\DoxyCodeLine{01256\ \ \ \textcolor{keywordflow}{return}\ arg0\ +\ p0\ +\ p1\ +\ p2\ +\ p3\ +\ p4\ +\ p5\ +\ p6;}
+\DoxyCodeLine{01257\ \}}
+\DoxyCodeLine{01258\ }
+\DoxyCodeLine{01259\ TEST(ActionPnMacroTest,\ WorksFor7Parameters)\ \{}
+\DoxyCodeLine{01260\ \ \ Action<int(\textcolor{keywordtype}{int})>\ a1\ =\ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7);}
+\DoxyCodeLine{01261\ \ \ EXPECT\_EQ(10\ +\ 1\ +\ 2\ +\ 3\ +\ 4\ +\ 5\ +\ 6\ +\ 7,\ a1.Perform(std::make\_tuple(10)));}
+\DoxyCodeLine{01262\ \}}
+\DoxyCodeLine{01263\ }
+\DoxyCodeLine{01264\ ACTION\_P8(Plus,\ p0,\ p1,\ p2,\ p3,\ p4,\ p5,\ p6,\ p7)\ \{}
+\DoxyCodeLine{01265\ \ \ \textcolor{keywordflow}{return}\ arg0\ +\ p0\ +\ p1\ +\ p2\ +\ p3\ +\ p4\ +\ p5\ +\ p6\ +\ p7;}
+\DoxyCodeLine{01266\ \}}
+\DoxyCodeLine{01267\ }
+\DoxyCodeLine{01268\ TEST(ActionPnMacroTest,\ WorksFor8Parameters)\ \{}
+\DoxyCodeLine{01269\ \ \ Action<int(\textcolor{keywordtype}{int})>\ a1\ =\ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7,\ 8);}
+\DoxyCodeLine{01270\ \ \ EXPECT\_EQ(10\ +\ 1\ +\ 2\ +\ 3\ +\ 4\ +\ 5\ +\ 6\ +\ 7\ +\ 8,}
+\DoxyCodeLine{01271\ \ \ \ \ \ \ \ \ \ \ \ \ a1.Perform(std::make\_tuple(10)));}
+\DoxyCodeLine{01272\ \}}
+\DoxyCodeLine{01273\ }
+\DoxyCodeLine{01274\ ACTION\_P9(Plus,\ p0,\ p1,\ p2,\ p3,\ p4,\ p5,\ p6,\ p7,\ p8)\ \{}
+\DoxyCodeLine{01275\ \ \ \textcolor{keywordflow}{return}\ arg0\ +\ p0\ +\ p1\ +\ p2\ +\ p3\ +\ p4\ +\ p5\ +\ p6\ +\ p7\ +\ p8;}
+\DoxyCodeLine{01276\ \}}
+\DoxyCodeLine{01277\ }
+\DoxyCodeLine{01278\ TEST(ActionPnMacroTest,\ WorksFor9Parameters)\ \{}
+\DoxyCodeLine{01279\ \ \ Action<int(\textcolor{keywordtype}{int})>\ a1\ =\ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7,\ 8,\ 9);}
+\DoxyCodeLine{01280\ \ \ EXPECT\_EQ(10\ +\ 1\ +\ 2\ +\ 3\ +\ 4\ +\ 5\ +\ 6\ +\ 7\ +\ 8\ +\ 9,}
+\DoxyCodeLine{01281\ \ \ \ \ \ \ \ \ \ \ \ \ a1.Perform(std::make\_tuple(10)));}
+\DoxyCodeLine{01282\ \}}
+\DoxyCodeLine{01283\ }
+\DoxyCodeLine{01284\ ACTION\_P10(Plus,\ p0,\ p1,\ p2,\ p3,\ p4,\ p5,\ p6,\ p7,\ p8,\ last\_param)\ \{}
+\DoxyCodeLine{01285\ \ \ arg0\_type\ t0\ =\ arg0;}
+\DoxyCodeLine{01286\ \ \ last\_param\_type\ t9\ =\ last\_param;}
+\DoxyCodeLine{01287\ \ \ \textcolor{keywordflow}{return}\ t0\ +\ p0\ +\ p1\ +\ p2\ +\ p3\ +\ p4\ +\ p5\ +\ p6\ +\ p7\ +\ p8\ +\ t9;}
+\DoxyCodeLine{01288\ \}}
+\DoxyCodeLine{01289\ }
+\DoxyCodeLine{01290\ TEST(ActionPnMacroTest,\ WorksFor10Parameters)\ \{}
+\DoxyCodeLine{01291\ \ \ Action<int(\textcolor{keywordtype}{int})>\ a1\ =\ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7,\ 8,\ 9,\ 10);}
+\DoxyCodeLine{01292\ \ \ EXPECT\_EQ(10\ +\ 1\ +\ 2\ +\ 3\ +\ 4\ +\ 5\ +\ 6\ +\ 7\ +\ 8\ +\ 9\ +\ 10,}
+\DoxyCodeLine{01293\ \ \ \ \ \ \ \ \ \ \ \ \ a1.Perform(std::make\_tuple(10)));}
+\DoxyCodeLine{01294\ \}}
+\DoxyCodeLine{01295\ }
+\DoxyCodeLine{01296\ \textcolor{comment}{//\ Tests\ that\ the\ action\ body\ can\ promote\ the\ parameter\ types.}}
+\DoxyCodeLine{01297\ }
+\DoxyCodeLine{01298\ ACTION\_P2(PadArgument,\ prefix,\ suffix)\ \{}
+\DoxyCodeLine{01299\ \ \ \textcolor{comment}{//\ The\ following\ lines\ promote\ the\ two\ parameters\ to\ desired\ types.}}
+\DoxyCodeLine{01300\ \ \ std::string\ prefix\_str(prefix);}
+\DoxyCodeLine{01301\ \ \ \textcolor{keywordtype}{char}\ suffix\_char\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{char}\textcolor{keyword}{>}(suffix);}
+\DoxyCodeLine{01302\ \ \ \textcolor{keywordflow}{return}\ prefix\_str\ +\ arg0\ +\ suffix\_char;}
+\DoxyCodeLine{01303\ \}}
+\DoxyCodeLine{01304\ }
+\DoxyCodeLine{01305\ TEST(ActionPnMacroTest,\ SimpleTypePromotion)\ \{}
+\DoxyCodeLine{01306\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>\ no\_promo\ =}
+\DoxyCodeLine{01307\ \ \ \ \ \ \ PadArgument(std::string(\textcolor{stringliteral}{"{}foo"{}}),\ \textcolor{charliteral}{'r'});}
+\DoxyCodeLine{01308\ \ \ Action<std::string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)>\ promo\ =}
+\DoxyCodeLine{01309\ \ \ \ \ \ \ PadArgument(\textcolor{stringliteral}{"{}foo"{}},\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\textcolor{charliteral}{'r'}));}
+\DoxyCodeLine{01310\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}foobar"{}},\ no\_promo.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}ba"{}}))));}
+\DoxyCodeLine{01311\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}foobar"{}},\ promo.Perform(std::make\_tuple(CharPtr(\textcolor{stringliteral}{"{}ba"{}}))));}
+\DoxyCodeLine{01312\ \}}
+\DoxyCodeLine{01313\ }
+\DoxyCodeLine{01314\ \textcolor{comment}{//\ Tests\ that\ we\ can\ partially\ restrict\ parameter\ types\ using\ a}}
+\DoxyCodeLine{01315\ \textcolor{comment}{//\ straight-\/forward\ pattern.}}
+\DoxyCodeLine{01316\ }
+\DoxyCodeLine{01317\ \textcolor{comment}{//\ Defines\ a\ generic\ action\ that\ doesn't\ restrict\ the\ types\ of\ its}}
+\DoxyCodeLine{01318\ \textcolor{comment}{//\ parameters.}}
+\DoxyCodeLine{01319\ ACTION\_P3(ConcatImpl,\ a,\ b,\ c)\ \{}
+\DoxyCodeLine{01320\ \ \ std::stringstream\ ss;}
+\DoxyCodeLine{01321\ \ \ ss\ <<\ a\ <<\ b\ <<\ c;}
+\DoxyCodeLine{01322\ \ \ \textcolor{keywordflow}{return}\ ss.str();}
+\DoxyCodeLine{01323\ \}}
+\DoxyCodeLine{01324\ }
+\DoxyCodeLine{01325\ \textcolor{comment}{//\ Next,\ we\ try\ to\ restrict\ that\ either\ the\ first\ parameter\ is\ a}}
+\DoxyCodeLine{01326\ \textcolor{comment}{//\ string,\ or\ the\ second\ parameter\ is\ an\ int.}}
+\DoxyCodeLine{01327\ }
+\DoxyCodeLine{01328\ \textcolor{comment}{//\ Defines\ a\ partially\ specialized\ wrapper\ that\ restricts\ the\ first}}
+\DoxyCodeLine{01329\ \textcolor{comment}{//\ parameter\ to\ std::string.}}
+\DoxyCodeLine{01330\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T1,\ \textcolor{keyword}{typename}\ T2>}
+\DoxyCodeLine{01331\ \textcolor{comment}{//\ ConcatImplActionP3\ is\ the\ class\ template\ ACTION\_P3\ uses\ to}}
+\DoxyCodeLine{01332\ \textcolor{comment}{//\ implement\ ConcatImpl.\ \ We\ shouldn't\ change\ the\ name\ as\ this}}
+\DoxyCodeLine{01333\ \textcolor{comment}{//\ pattern\ requires\ the\ user\ to\ use\ it\ directly.}}
+\DoxyCodeLine{01334\ ConcatImplActionP3<std::string,\ T1,\ T2>\ Concat(\textcolor{keyword}{const}\ std::string\&\ a,\ T1\ b,}
+\DoxyCodeLine{01335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ T2\ c)\ \{}
+\DoxyCodeLine{01336\ \ \ GTEST\_INTENTIONAL\_CONST\_COND\_PUSH\_()}
+\DoxyCodeLine{01337\ \ \ if\ (true)\ \{}
+\DoxyCodeLine{01338\ \ \ \ \ GTEST\_INTENTIONAL\_CONST\_COND\_POP\_()}
+\DoxyCodeLine{01339\ \ \ \ \ \textcolor{comment}{//\ This\ branch\ verifies\ that\ ConcatImpl()\ can\ be\ invoked\ without}}
+\DoxyCodeLine{01340\ \ \ \ \ \textcolor{comment}{//\ explicit\ template\ arguments.}}
+\DoxyCodeLine{01341\ \ \ \ \ return\ ConcatImpl(a,\ b,\ c);}
+\DoxyCodeLine{01342\ \ \ \}\ else\ \{}
+\DoxyCodeLine{01343\ \ \ \ \ \textcolor{comment}{//\ This\ branch\ verifies\ that\ ConcatImpl()\ can\ also\ be\ invoked\ with}}
+\DoxyCodeLine{01344\ \ \ \ \ \textcolor{comment}{//\ explicit\ template\ arguments.\ \ It\ doesn't\ really\ need\ to\ be}}
+\DoxyCodeLine{01345\ \ \ \ \ \textcolor{comment}{//\ executed\ as\ this\ is\ a\ compile-\/time\ verification.}}
+\DoxyCodeLine{01346\ \ \ \ \ \textcolor{keywordflow}{return}\ ConcatImpl<std::string,\ T1,\ T2>(a,\ b,\ c);}
+\DoxyCodeLine{01347\ \ \ \}}
+\DoxyCodeLine{01348\ \}}
+\DoxyCodeLine{01349\ }
+\DoxyCodeLine{01350\ \textcolor{comment}{//\ Defines\ another\ partially\ specialized\ wrapper\ that\ restricts\ the}}
+\DoxyCodeLine{01351\ \textcolor{comment}{//\ second\ parameter\ to\ int.}}
+\DoxyCodeLine{01352\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T1,\ \textcolor{keyword}{typename}\ T2>}
+\DoxyCodeLine{01353\ ConcatImplActionP3<T1,\ int,\ T2>\ Concat(T1\ a,\ \textcolor{keywordtype}{int}\ b,\ T2\ c)\ \{}
+\DoxyCodeLine{01354\ \ \ \textcolor{keywordflow}{return}\ ConcatImpl(a,\ b,\ c);}
+\DoxyCodeLine{01355\ \}}
+\DoxyCodeLine{01356\ }
+\DoxyCodeLine{01357\ TEST(ActionPnMacroTest,\ CanPartiallyRestrictParameterTypes)\ \{}
+\DoxyCodeLine{01358\ \ \ Action<\textcolor{keyword}{const}\ std::string()>\ a1\ =\ Concat(\textcolor{stringliteral}{"{}Hello"{}},\ \textcolor{stringliteral}{"{}1"{}},\ 2);}
+\DoxyCodeLine{01359\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}Hello12"{}},\ a1.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01360\ }
+\DoxyCodeLine{01361\ \ \ a1\ =\ Concat(1,\ 2,\ 3);}
+\DoxyCodeLine{01362\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}123"{}},\ a1.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01363\ \}}
+\DoxyCodeLine{01364\ }
+\DoxyCodeLine{01365\ \textcolor{comment}{//\ Verifies\ the\ type\ of\ an\ ACTION*.}}
+\DoxyCodeLine{01366\ }
+\DoxyCodeLine{01367\ ACTION(DoFoo)\ \{\}}
+\DoxyCodeLine{01368\ ACTION\_P(DoFoo,\ p)\ \{\}}
+\DoxyCodeLine{01369\ ACTION\_P2(DoFoo,\ p0,\ p1)\ \{\}}
+\DoxyCodeLine{01370\ }
+\DoxyCodeLine{01371\ TEST(ActionPnMacroTest,\ TypesAreCorrect)\ \{}
+\DoxyCodeLine{01372\ \ \ \textcolor{comment}{//\ DoFoo()\ must\ be\ assignable\ to\ a\ DoFooAction\ variable.}}
+\DoxyCodeLine{01373\ \ \ DoFooAction\ a0\ =\ DoFoo();}
+\DoxyCodeLine{01374\ }
+\DoxyCodeLine{01375\ \ \ \textcolor{comment}{//\ DoFoo(1)\ must\ be\ assignable\ to\ a\ DoFooActionP\ variable.}}
+\DoxyCodeLine{01376\ \ \ DoFooActionP<int>\ a1\ =\ DoFoo(1);}
+\DoxyCodeLine{01377\ }
+\DoxyCodeLine{01378\ \ \ \textcolor{comment}{//\ DoFoo(p1,\ ...,\ pk)\ must\ be\ assignable\ to\ a\ DoFooActionPk}}
+\DoxyCodeLine{01379\ \ \ \textcolor{comment}{//\ variable,\ and\ so\ on.}}
+\DoxyCodeLine{01380\ \ \ DoFooActionP2<int,\ char>\ a2\ =\ DoFoo(1,\ \textcolor{charliteral}{'2'});}
+\DoxyCodeLine{01381\ \ \ PlusActionP3<int,\ int,\ char>\ a3\ =\ Plus(1,\ 2,\ \textcolor{charliteral}{'3'});}
+\DoxyCodeLine{01382\ \ \ PlusActionP4<int,\ int,\ int,\ char>\ a4\ =\ Plus(1,\ 2,\ 3,\ \textcolor{charliteral}{'4'});}
+\DoxyCodeLine{01383\ \ \ PlusActionP5<int,\ int,\ int,\ int,\ char>\ a5\ =\ Plus(1,\ 2,\ 3,\ 4,\ \textcolor{charliteral}{'5'});}
+\DoxyCodeLine{01384\ \ \ PlusActionP6<int,\ int,\ int,\ int,\ int,\ char>\ a6\ =\ Plus(1,\ 2,\ 3,\ 4,\ 5,\ \textcolor{charliteral}{'6'});}
+\DoxyCodeLine{01385\ \ \ PlusActionP7<int,\ int,\ int,\ int,\ int,\ int,\ char>\ a7\ =}
+\DoxyCodeLine{01386\ \ \ \ \ \ \ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ \textcolor{charliteral}{'7'});}
+\DoxyCodeLine{01387\ \ \ PlusActionP8<int,\ int,\ int,\ int,\ int,\ int,\ int,\ char>\ a8\ =}
+\DoxyCodeLine{01388\ \ \ \ \ \ \ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7,\ \textcolor{charliteral}{'8'});}
+\DoxyCodeLine{01389\ \ \ PlusActionP9<int,\ int,\ int,\ int,\ int,\ int,\ int,\ int,\ char>\ a9\ =}
+\DoxyCodeLine{01390\ \ \ \ \ \ \ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7,\ 8,\ \textcolor{charliteral}{'9'});}
+\DoxyCodeLine{01391\ \ \ PlusActionP10<int,\ int,\ int,\ int,\ int,\ int,\ int,\ int,\ int,\ char>\ a10\ =}
+\DoxyCodeLine{01392\ \ \ \ \ \ \ Plus(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7,\ 8,\ 9,\ \textcolor{charliteral}{'0'});}
+\DoxyCodeLine{01393\ }
+\DoxyCodeLine{01394\ \ \ \textcolor{comment}{//\ Avoid\ "{}unused\ variable"{}\ warnings.}}
+\DoxyCodeLine{01395\ \ \ (void)a0;}
+\DoxyCodeLine{01396\ \ \ (void)a1;}
+\DoxyCodeLine{01397\ \ \ (void)a2;}
+\DoxyCodeLine{01398\ \ \ (void)a3;}
+\DoxyCodeLine{01399\ \ \ (void)a4;}
+\DoxyCodeLine{01400\ \ \ (void)a5;}
+\DoxyCodeLine{01401\ \ \ (void)a6;}
+\DoxyCodeLine{01402\ \ \ (void)a7;}
+\DoxyCodeLine{01403\ \ \ (void)a8;}
+\DoxyCodeLine{01404\ \ \ (void)a9;}
+\DoxyCodeLine{01405\ \ \ (void)a10;}
+\DoxyCodeLine{01406\ \}}
+\DoxyCodeLine{01407\ }
+\DoxyCodeLine{01408\ \textcolor{comment}{//\ Tests\ that\ an\ ACTION\_P*()\ action\ can\ be\ explicitly\ instantiated}}
+\DoxyCodeLine{01409\ \textcolor{comment}{//\ with\ reference-\/typed\ parameters.}}
+\DoxyCodeLine{01410\ }
+\DoxyCodeLine{01411\ ACTION\_P(Plus1,\ x)\ \{\ \textcolor{keywordflow}{return}\ x;\ \}}
+\DoxyCodeLine{01412\ ACTION\_P2(Plus2,\ x,\ y)\ \{\ \textcolor{keywordflow}{return}\ x\ +\ y;\ \}}
+\DoxyCodeLine{01413\ ACTION\_P3(Plus3,\ x,\ y,\ z)\ \{\ \textcolor{keywordflow}{return}\ x\ +\ y\ +\ z;\ \}}
+\DoxyCodeLine{01414\ ACTION\_P10(Plus10,\ a0,\ a1,\ a2,\ a3,\ a4,\ a5,\ a6,\ a7,\ a8,\ a9)\ \{}
+\DoxyCodeLine{01415\ \ \ \textcolor{keywordflow}{return}\ a0\ +\ a1\ +\ a2\ +\ a3\ +\ a4\ +\ a5\ +\ a6\ +\ a7\ +\ a8\ +\ a9;}
+\DoxyCodeLine{01416\ \}}
+\DoxyCodeLine{01417\ }
+\DoxyCodeLine{01418\ TEST(ActionPnMacroTest,\ CanExplicitlyInstantiateWithReferenceTypes)\ \{}
+\DoxyCodeLine{01419\ \ \ \textcolor{keywordtype}{int}\ x\ =\ 1,\ y\ =\ 2,\ z\ =\ 3;}
+\DoxyCodeLine{01420\ \ \ \textcolor{keyword}{const}\ std::tuple<>\ empty\ =\ std::make\_tuple();}
+\DoxyCodeLine{01421\ }
+\DoxyCodeLine{01422\ \ \ Action<int()>\ a\ =\ Plus1<int\&>(x);}
+\DoxyCodeLine{01423\ \ \ EXPECT\_EQ(1,\ a.Perform(empty));}
+\DoxyCodeLine{01424\ }
+\DoxyCodeLine{01425\ \ \ a\ =\ Plus2<const\ int\&,\ int\&>(x,\ y);}
+\DoxyCodeLine{01426\ \ \ EXPECT\_EQ(3,\ a.Perform(empty));}
+\DoxyCodeLine{01427\ }
+\DoxyCodeLine{01428\ \ \ a\ =\ Plus3<int\&,\ const\ int\&,\ int\&>(x,\ y,\ z);}
+\DoxyCodeLine{01429\ \ \ EXPECT\_EQ(6,\ a.Perform(empty));}
+\DoxyCodeLine{01430\ }
+\DoxyCodeLine{01431\ \ \ \textcolor{keywordtype}{int}\ n[10]\ =\ \{1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7,\ 8,\ 9,\ 10\};}
+\DoxyCodeLine{01432\ \ \ a\ =\ Plus10<\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&,\ \textcolor{keywordtype}{int}\&,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&,\ \textcolor{keywordtype}{int}\&,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&,\ \textcolor{keywordtype}{int}\&,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&,}
+\DoxyCodeLine{01433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\&,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&,\ \textcolor{keywordtype}{int}\&>(n[0],\ n[1],\ n[2],\ n[3],\ n[4],\ n[5],\ n[6],}
+\DoxyCodeLine{01434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ n[7],\ n[8],\ n[9]);}
+\DoxyCodeLine{01435\ \ \ EXPECT\_EQ(55,\ a.Perform(empty));}
+\DoxyCodeLine{01436\ \}}
+\DoxyCodeLine{01437\ }
+\DoxyCodeLine{01438\ \textcolor{keyword}{class\ }TenArgConstructorClass\ \{}
+\DoxyCodeLine{01439\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{01440\ \ \ TenArgConstructorClass(\textcolor{keywordtype}{int}\ a1,\ \textcolor{keywordtype}{int}\ a2,\ \textcolor{keywordtype}{int}\ a3,\ \textcolor{keywordtype}{int}\ a4,\ \textcolor{keywordtype}{int}\ a5,\ \textcolor{keywordtype}{int}\ a6,\ \textcolor{keywordtype}{int}\ a7,}
+\DoxyCodeLine{01441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ a8,\ \textcolor{keywordtype}{int}\ a9,\ \textcolor{keywordtype}{int}\ a10)}
+\DoxyCodeLine{01442\ \ \ \ \ \ \ :\ value\_(a1\ +\ a2\ +\ a3\ +\ a4\ +\ a5\ +\ a6\ +\ a7\ +\ a8\ +\ a9\ +\ a10)\ \{\}}
+\DoxyCodeLine{01443\ \ \ \textcolor{keywordtype}{int}\ value\_;}
+\DoxyCodeLine{01444\ \};}
+\DoxyCodeLine{01445\ }
+\DoxyCodeLine{01446\ \textcolor{comment}{//\ Tests\ that\ ACTION\_TEMPLATE\ works\ when\ there\ is\ no\ value\ parameter.}}
+\DoxyCodeLine{01447\ ACTION\_TEMPLATE(CreateNew,\ HAS\_1\_TEMPLATE\_PARAMS(\textcolor{keyword}{typename},\ T),}
+\DoxyCodeLine{01448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_0\_VALUE\_PARAMS())\ \{}
+\DoxyCodeLine{01449\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ T;}
+\DoxyCodeLine{01450\ \}}
+\DoxyCodeLine{01451\ }
+\DoxyCodeLine{01452\ TEST(ActionTemplateTest,\ WorksWithoutValueParam)\ \{}
+\DoxyCodeLine{01453\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classtesting_1_1_action}{Action}}<\textcolor{keywordtype}{int}*()>\ a\ =\ CreateNew<int>();}
+\DoxyCodeLine{01454\ \ \ \textcolor{keywordtype}{int}*\ p\ =\ a.Perform(std::make\_tuple());}
+\DoxyCodeLine{01455\ \ \ \textcolor{keyword}{delete}\ p;}
+\DoxyCodeLine{01456\ \}}
+\DoxyCodeLine{01457\ }
+\DoxyCodeLine{01458\ \textcolor{comment}{//\ Tests\ that\ ACTION\_TEMPLATE\ works\ when\ there\ are\ value\ parameters.}}
+\DoxyCodeLine{01459\ ACTION\_TEMPLATE(CreateNew,\ HAS\_1\_TEMPLATE\_PARAMS(\textcolor{keyword}{typename},\ T),}
+\DoxyCodeLine{01460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_1\_VALUE\_PARAMS(a0))\ \{}
+\DoxyCodeLine{01461\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ T(a0);}
+\DoxyCodeLine{01462\ \}}
+\DoxyCodeLine{01463\ }
+\DoxyCodeLine{01464\ TEST(ActionTemplateTest,\ WorksWithValueParams)\ \{}
+\DoxyCodeLine{01465\ \ \ \textcolor{keyword}{const}\ Action<\textcolor{keywordtype}{int}*()>\ a\ =\ CreateNew<int>(42);}
+\DoxyCodeLine{01466\ \ \ \textcolor{keywordtype}{int}*\ p\ =\ a.Perform(std::make\_tuple());}
+\DoxyCodeLine{01467\ \ \ EXPECT\_EQ(42,\ *p);}
+\DoxyCodeLine{01468\ \ \ \textcolor{keyword}{delete}\ p;}
+\DoxyCodeLine{01469\ \}}
+\DoxyCodeLine{01470\ }
+\DoxyCodeLine{01471\ \textcolor{comment}{//\ Tests\ that\ ACTION\_TEMPLATE\ works\ for\ integral\ template\ parameters.}}
+\DoxyCodeLine{01472\ ACTION\_TEMPLATE(MyDeleteArg,\ HAS\_1\_TEMPLATE\_PARAMS(\textcolor{keywordtype}{int},\ k),}
+\DoxyCodeLine{01473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_0\_VALUE\_PARAMS())\ \{}
+\DoxyCodeLine{01474\ \ \ \textcolor{keyword}{delete}\ std::get<k>(args);}
+\DoxyCodeLine{01475\ \}}
+\DoxyCodeLine{01476\ }
+\DoxyCodeLine{01477\ \textcolor{comment}{//\ Resets\ a\ bool\ variable\ in\ the\ destructor.}}
+\DoxyCodeLine{01478\ \textcolor{keyword}{class\ }BoolResetter\ \{}
+\DoxyCodeLine{01479\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{01480\ \ \ \textcolor{keyword}{explicit}\ BoolResetter(\textcolor{keywordtype}{bool}*\ value)\ :\ value\_(value)\ \{\}}
+\DoxyCodeLine{01481\ \ \ \string~BoolResetter()\ \{\ *value\_\ =\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{01482\ }
+\DoxyCodeLine{01483\ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{01484\ \ \ \textcolor{keywordtype}{bool}*\ value\_;}
+\DoxyCodeLine{01485\ \};}
+\DoxyCodeLine{01486\ }
+\DoxyCodeLine{01487\ TEST(ActionTemplateTest,\ WorksForIntegralTemplateParams)\ \{}
+\DoxyCodeLine{01488\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classtesting_1_1_action}{Action}}<void(\textcolor{keywordtype}{int}*,\ \mbox{\hyperlink{classtesting_1_1gmock__more__actions__test_1_1_bool_resetter}{BoolResetter}}*)>\ a\ =\ MyDeleteArg<1>();}
+\DoxyCodeLine{01489\ \ \ \textcolor{keywordtype}{int}\ n\ =\ 0;}
+\DoxyCodeLine{01490\ \ \ \textcolor{keywordtype}{bool}\ b\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01491\ \ \ \textcolor{keyword}{auto}*\ resetter\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classtesting_1_1gmock__more__actions__test_1_1_bool_resetter}{BoolResetter}}(\&b);}
+\DoxyCodeLine{01492\ \ \ a.Perform(std::make\_tuple(\&n,\ resetter));}
+\DoxyCodeLine{01493\ \ \ EXPECT\_FALSE(b);\ \ \textcolor{comment}{//\ Verifies\ that\ resetter\ is\ deleted.}}
+\DoxyCodeLine{01494\ \}}
+\DoxyCodeLine{01495\ }
+\DoxyCodeLine{01496\ \textcolor{comment}{//\ Tests\ that\ ACTION\_TEMPLATES\ works\ for\ template\ template\ parameters.}}
+\DoxyCodeLine{01497\ ACTION\_TEMPLATE(ReturnSmartPointer,}
+\DoxyCodeLine{01498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HAS\_1\_TEMPLATE\_PARAMS(template\ <typename\ Pointee>\ \textcolor{keyword}{class},}
+\DoxyCodeLine{01499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Pointer),}
+\DoxyCodeLine{01500\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_1\_VALUE\_PARAMS(pointee))\ \{}
+\DoxyCodeLine{01501\ \ \ \textcolor{keywordflow}{return}\ Pointer<pointee\_type>(\textcolor{keyword}{new}\ pointee\_type(pointee));}
+\DoxyCodeLine{01502\ \}}
+\DoxyCodeLine{01503\ }
+\DoxyCodeLine{01504\ TEST(ActionTemplateTest,\ WorksForTemplateTemplateParameters)\ \{}
+\DoxyCodeLine{01505\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classtesting_1_1gmock__more__actions__test_1_1_action}{Action<std::shared\_ptr<int>}}()>\ a\ =}
+\DoxyCodeLine{01506\ \ \ \ \ \ \ ReturnSmartPointer<std::shared\_ptr>(42);}
+\DoxyCodeLine{01507\ \ \ std::shared\_ptr<int>\ p\ =\ a.Perform(std::make\_tuple());}
+\DoxyCodeLine{01508\ \ \ EXPECT\_EQ(42,\ *p);}
+\DoxyCodeLine{01509\ \}}
+\DoxyCodeLine{01510\ }
+\DoxyCodeLine{01511\ \textcolor{comment}{//\ Tests\ that\ ACTION\_TEMPLATE\ works\ for\ 10\ template\ parameters.}}
+\DoxyCodeLine{01512\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T1,\ \textcolor{keyword}{typename}\ T2,\ \textcolor{keyword}{typename}\ T3,\ \textcolor{keywordtype}{int}\ k4,\ \textcolor{keywordtype}{bool}\ k5,}
+\DoxyCodeLine{01513\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ k6,\ \textcolor{keyword}{typename}\ T7,\ \textcolor{keyword}{typename}\ T8,\ \textcolor{keyword}{typename}\ T9>}
+\DoxyCodeLine{01514\ \textcolor{keyword}{struct\ }GiantTemplate\ \{}
+\DoxyCodeLine{01515\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{01516\ \ \ \textcolor{keyword}{explicit}\ GiantTemplate(\textcolor{keywordtype}{int}\ a\_value)\ :\ value(a\_value)\ \{\}}
+\DoxyCodeLine{01517\ \ \ \textcolor{keywordtype}{int}\ value;}
+\DoxyCodeLine{01518\ \};}
+\DoxyCodeLine{01519\ }
+\DoxyCodeLine{01520\ ACTION\_TEMPLATE(ReturnGiant,}
+\DoxyCodeLine{01521\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HAS\_10\_TEMPLATE\_PARAMS(\textcolor{keyword}{typename},\ T1,\ \textcolor{keyword}{typename},\ T2,\ \textcolor{keyword}{typename},\ T3,}
+\DoxyCodeLine{01522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int},\ k4,\ \textcolor{keywordtype}{bool},\ k5,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int},\ k6,}
+\DoxyCodeLine{01523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class},\ T7,\ \textcolor{keyword}{class},\ T8,\ \textcolor{keyword}{class},\ T9,}
+\DoxyCodeLine{01524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ template\ <typename\ T>\ \textcolor{keyword}{class},\ T10),}
+\DoxyCodeLine{01525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_1\_VALUE\_PARAMS(value))\ \{}
+\DoxyCodeLine{01526\ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtesting_1_1gmock__more__actions__test_1_1_giant_template}{GiantTemplate<T10<T1>}},\ T2,\ T3,\ k4,\ k5,\ k6,\ T7,\ T8,\ T9>(value);}
+\DoxyCodeLine{01527\ \}}
+\DoxyCodeLine{01528\ }
+\DoxyCodeLine{01529\ TEST(ActionTemplateTest,\ WorksFor10TemplateParameters)\ \{}
+\DoxyCodeLine{01530\ \ \ \textcolor{keyword}{using\ }Giant\ =\ GiantTemplate<std::shared\_ptr<int>,\ bool,\ double,\ 5,\ \textcolor{keyword}{true},\ 6,}
+\DoxyCodeLine{01531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ char,\ unsigned,\ \textcolor{keywordtype}{int}>;}
+\DoxyCodeLine{01532\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classtesting_1_1_action}{Action}}<Giant()>\ a\ =\ ReturnGiant<int,\ bool,\ double,\ 5,\ \textcolor{keyword}{true},\ 6,\ char,}
+\DoxyCodeLine{01533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned,\ int,\ std::shared\_ptr>(42);}
+\DoxyCodeLine{01534\ \ \ Giant\ giant\ =\ a.Perform(std::make\_tuple());}
+\DoxyCodeLine{01535\ \ \ EXPECT\_EQ(42,\ giant.value);}
+\DoxyCodeLine{01536\ \}}
+\DoxyCodeLine{01537\ }
+\DoxyCodeLine{01538\ \textcolor{comment}{//\ Tests\ that\ ACTION\_TEMPLATE\ works\ for\ 10\ value\ parameters.}}
+\DoxyCodeLine{01539\ ACTION\_TEMPLATE(ReturnSum,\ HAS\_1\_TEMPLATE\_PARAMS(\textcolor{keyword}{typename},\ Number),}
+\DoxyCodeLine{01540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_10\_VALUE\_PARAMS(v1,\ v2,\ v3,\ v4,\ v5,\ v6,\ v7,\ v8,\ v9,\ v10))\ \{}
+\DoxyCodeLine{01541\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}Number\textcolor{keyword}{>}(v1)\ +\ v2\ +\ v3\ +\ v4\ +\ v5\ +\ v6\ +\ v7\ +\ v8\ +\ v9\ +\ v10;}
+\DoxyCodeLine{01542\ \}}
+\DoxyCodeLine{01543\ }
+\DoxyCodeLine{01544\ TEST(ActionTemplateTest,\ WorksFor10ValueParameters)\ \{}
+\DoxyCodeLine{01545\ \ \ \textcolor{keyword}{const}\ Action<int()>\ a\ =\ ReturnSum<int>(1,\ 2,\ 3,\ 4,\ 5,\ 6,\ 7,\ 8,\ 9,\ 10);}
+\DoxyCodeLine{01546\ \ \ EXPECT\_EQ(55,\ a.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01547\ \}}
+\DoxyCodeLine{01548\ }
+\DoxyCodeLine{01549\ \textcolor{comment}{//\ Tests\ that\ ACTION\_TEMPLATE\ and\ ACTION/ACTION\_P*\ can\ be\ overloaded}}
+\DoxyCodeLine{01550\ \textcolor{comment}{//\ on\ the\ number\ of\ value\ parameters.}}
+\DoxyCodeLine{01551\ }
+\DoxyCodeLine{01552\ ACTION(ReturnSum)\ \{\ \textcolor{keywordflow}{return}\ 0;\ \}}
+\DoxyCodeLine{01553\ }
+\DoxyCodeLine{01554\ ACTION\_P(ReturnSum,\ x)\ \{\ \textcolor{keywordflow}{return}\ x;\ \}}
+\DoxyCodeLine{01555\ }
+\DoxyCodeLine{01556\ ACTION\_TEMPLATE(ReturnSum,\ HAS\_1\_TEMPLATE\_PARAMS(\textcolor{keyword}{typename},\ Number),}
+\DoxyCodeLine{01557\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_2\_VALUE\_PARAMS(v1,\ v2))\ \{}
+\DoxyCodeLine{01558\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}Number\textcolor{keyword}{>}(v1)\ +\ v2;}
+\DoxyCodeLine{01559\ \}}
+\DoxyCodeLine{01560\ }
+\DoxyCodeLine{01561\ ACTION\_TEMPLATE(ReturnSum,\ HAS\_1\_TEMPLATE\_PARAMS(\textcolor{keyword}{typename},\ Number),}
+\DoxyCodeLine{01562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_3\_VALUE\_PARAMS(v1,\ v2,\ v3))\ \{}
+\DoxyCodeLine{01563\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}Number\textcolor{keyword}{>}(v1)\ +\ v2\ +\ v3;}
+\DoxyCodeLine{01564\ \}}
+\DoxyCodeLine{01565\ }
+\DoxyCodeLine{01566\ ACTION\_TEMPLATE(ReturnSum,\ HAS\_2\_TEMPLATE\_PARAMS(\textcolor{keyword}{typename},\ Number,\ \textcolor{keywordtype}{int},\ k),}
+\DoxyCodeLine{01567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AND\_4\_VALUE\_PARAMS(v1,\ v2,\ v3,\ v4))\ \{}
+\DoxyCodeLine{01568\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}Number\textcolor{keyword}{>}(v1)\ +\ v2\ +\ v3\ +\ v4\ +\ k;}
+\DoxyCodeLine{01569\ \}}
+\DoxyCodeLine{01570\ }
+\DoxyCodeLine{01571\ TEST(ActionTemplateTest,\ CanBeOverloadedOnNumberOfValueParameters)\ \{}
+\DoxyCodeLine{01572\ \ \ \textcolor{keyword}{const}\ Action<int()>\ a0\ =\ ReturnSum();}
+\DoxyCodeLine{01573\ \ \ \textcolor{keyword}{const}\ Action<int()>\ a1\ =\ ReturnSum(1);}
+\DoxyCodeLine{01574\ \ \ \textcolor{keyword}{const}\ Action<int()>\ a2\ =\ ReturnSum<int>(1,\ 2);}
+\DoxyCodeLine{01575\ \ \ \textcolor{keyword}{const}\ Action<int()>\ a3\ =\ ReturnSum<int>(1,\ 2,\ 3);}
+\DoxyCodeLine{01576\ \ \ \textcolor{keyword}{const}\ Action<int()>\ a4\ =\ ReturnSum<int,\ 10000>(2000,\ 300,\ 40,\ 5);}
+\DoxyCodeLine{01577\ \ \ EXPECT\_EQ(0,\ a0.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01578\ \ \ EXPECT\_EQ(1,\ a1.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01579\ \ \ EXPECT\_EQ(3,\ a2.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01580\ \ \ EXPECT\_EQ(6,\ a3.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01581\ \ \ EXPECT\_EQ(12345,\ a4.Perform(std::make\_tuple()));}
+\DoxyCodeLine{01582\ \}}
+\DoxyCodeLine{01583\ }
+\DoxyCodeLine{01584\ \}\ \ \textcolor{comment}{//\ namespace\ gmock\_more\_actions\_test}}
+\DoxyCodeLine{01585\ \}\ \ \textcolor{comment}{//\ namespace\ testing}}
+\DoxyCodeLine{01586\ }
+\DoxyCodeLine{01587\ GTEST\_DISABLE\_MSC\_WARNINGS\_POP\_()\ \ \textcolor{comment}{//\ 4100\ 4503}}
+\DoxyCodeLine{01588\ GTEST\_DISABLE\_MSC\_WARNINGS\_POP\_()\ \ \textcolor{comment}{//\ 4577}}
+
+\end{DoxyCode}

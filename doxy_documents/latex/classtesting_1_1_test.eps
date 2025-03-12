@@ -1,0 +1,549 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: ClassName
+%%Creator: Doxygen
+%%CreationDate: Time
+%%For: 
+%Magnification: 1.00
+%%Orientation: Portrait
+%%BoundingBox: 0 0 500 1768.292725
+%%Pages: 0
+%%BeginSetup
+%%EndSetup
+%%EndComments
+
+% ----- variables -----
+
+/boxwidth 0 def
+/boxheight 40 def
+/fontheight 24 def
+/marginwidth 10 def
+/distx 20 def
+/disty 40 def
+/boundaspect 0.282759 def  % aspect ratio of the BoundingBox (width/height)
+/boundx 500 def
+/boundy boundx boundaspect div def
+/xspacing 0 def
+/yspacing 0 def
+/rows 87 def
+/cols 2 def
+/scalefactor 0 def
+/boxfont /Times-Roman findfont fontheight scalefont def
+
+% ----- procedures -----
+
+/dotted { [1 4] 0 setdash } def
+/dashed { [5] 0 setdash } def
+/solid  { [] 0 setdash } def
+
+/max % result = MAX(arg1,arg2)
+{
+  /a exch def
+  /b exch def
+  a b gt {a} {b} ifelse
+} def
+
+/xoffset % result = MAX(0,(scalefactor-(boxwidth*cols+distx*(cols-1)))/2)
+{
+  0 scalefactor boxwidth cols mul distx cols 1 sub mul add sub 2 div max
+} def
+
+/cw % boxwidth = MAX(boxwidth, stringwidth(arg1))
+{
+  /str exch def
+  /boxwidth boxwidth str stringwidth pop max def
+} def
+
+/box % draws a box with text 'arg1' at grid pos (arg2,arg3)
+{ gsave
+  2 setlinewidth
+  newpath
+  exch xspacing mul xoffset add
+  exch yspacing mul
+  moveto
+  boxwidth 0 rlineto 
+  0 boxheight rlineto 
+  boxwidth neg 0 rlineto 
+  0 boxheight neg rlineto 
+  closepath
+  dup stringwidth pop neg boxwidth add 2 div
+  boxheight fontheight 2 div sub 2 div
+  rmoveto show stroke
+  grestore
+} def  
+
+/mark
+{ newpath
+  exch xspacing mul xoffset add boxwidth add
+  exch yspacing mul
+  moveto
+  0 boxheight 4 div rlineto
+  boxheight neg 4 div boxheight neg 4 div rlineto
+  closepath
+  eofill
+  stroke
+} def
+
+/arrow
+{ newpath
+  moveto
+  3 -8 rlineto
+  -6 0 rlineto
+  3 8 rlineto
+  closepath
+  eofill
+  stroke
+} def
+
+/out % draws an output connector for the block at (arg1,arg2)
+{
+  newpath
+  exch xspacing mul xoffset add boxwidth 2 div add
+  exch yspacing mul boxheight add
+  /y exch def
+  /x exch def
+  x y moveto
+  0 disty 2 div rlineto 
+  stroke
+  1 eq { x y disty 2 div add arrow } if
+} def
+
+/in % draws an input connector for the block at (arg1,arg2)
+{
+  newpath
+  exch xspacing mul xoffset add boxwidth 2 div add
+  exch yspacing mul disty 2 div sub
+  /y exch def
+  /x exch def
+  x y moveto
+  0 disty 2 div rlineto
+  stroke
+  1 eq { x y disty 2 div add arrow } if
+} def
+
+/hedge
+{
+  exch xspacing mul xoffset add boxwidth 2 div add
+  exch yspacing mul boxheight 2 div sub
+  /y exch def
+  /x exch def
+  newpath
+  x y moveto
+  boxwidth 2 div distx add 0 rlineto
+  stroke
+  1 eq
+  { newpath x boxwidth 2 div distx add add y moveto
+    -8 3 rlineto
+    0 -6 rlineto
+    8 3 rlineto
+    closepath
+    eofill
+    stroke
+  } if
+} def
+
+/vedge
+{
+  /ye exch def
+  /ys exch def
+  /xs exch def
+  newpath
+  xs xspacing mul xoffset add boxwidth 2 div add dup
+  ys yspacing mul boxheight 2 div sub
+  moveto
+  ye yspacing mul boxheight 2 div sub
+  lineto
+  stroke
+} def
+
+/conn % connections the blocks from col 'arg1' to 'arg2' of row 'arg3'
+{
+  /ys exch def
+  /xe exch def
+  /xs exch def
+  newpath
+  xs xspacing mul xoffset add boxwidth 2 div add
+  ys yspacing mul disty 2 div sub
+  moveto
+  xspacing xe xs sub mul 0
+  rlineto
+  stroke
+} def
+
+% ----- main ------
+
+boxfont setfont
+1 boundaspect scale
+(testing::Test) cw
+(testing::TestWithParam< int >) cw
+(testing::TestWithParam< Unstreamable >) cw
+(testing::TestWithParam< std::string >) cw
+(testing::TestWithParam< CustomStruct >) cw
+(testing::TestWithParam< MyEnums >) cw
+(testing::TestWithParam< MyType >) cw
+(testing::TestWithParam< bool >) cw
+(TypedTest< T >) cw
+(FooTest) cw
+(CommonTest< T >) cw
+(ContainerTest< T >) cw
+(DetectNotInstantiatedTypesTest< T >) cw
+(DisabledTest) cw
+(DynamicFixture) cw
+(DynamicUnitTestFixture) cw
+(ExpectFailureTest) cw
+(FailedTest) cw
+(FatalFailureInFixtureConstructorTest) cw
+(FatalFailureInSetUpTest) cw
+(Fixture) cw
+(FooTest) cw
+(FooTestFixture) cw
+(GMockOutputTest) cw
+(MacroNamingTestNonParametrized) cw
+(NonFatalFailureInFixtureConstructorTest) cw
+(NonFatalFailureInSetUpTest) cw
+(NonParameterizedBaseTest) cw
+(Predicate1Test) cw
+(Predicate2Test) cw
+(Predicate3Test) cw
+(Predicate4Test) cw
+(Predicate5Test) cw
+(PropertyOne) cw
+(PropertyRecordingTest) cw
+(PropertyTwo) cw
+(ProtectedFixtureMethodsTest) cw
+(SetupFailTest) cw
+(SkippedTest) cw
+(SuccessfulTest) cw
+(TEST_F_before_TEST_in_same_test_case) cw
+(TEST_before_TEST_F_in_same_test_case) cw
+(TearDownFailTest) cw
+(TestSuiteThatFailsToSetUp) cw
+(TestSuiteThatSkipsInSetUp) cw
+(TypeParamTest< T >) cw
+(TypeParameterizedTestSuite< T >) cw
+(TypeParameterizedTestSuite< T >) cw
+(TypeParametrizedTestWithNames< T >) cw
+(TypedTest< T >) cw
+(TypedTest< T >) cw
+(TypedTest< T >) cw
+(TypedTest< T >) cw
+(TypedTest1< T >) cw
+(TypedTest2< T >) cw
+(TypedTestP< T >) cw
+(TypedTestP1< T >) cw
+(TypedTestP2< T >) cw
+(TypedTestSuitePStateTest) cw
+(TypedTestWithNames< T >) cw
+(TypedTestWithNames< T >) cw
+(bar::MixedUpTestSuiteTest) cw
+(bar::MixedUpTestSuiteWithSameTestNameTest) cw
+(foo::MixedUpTestSuiteTest) cw
+(foo::MixedUpTestSuiteWithSameTestNameTest) cw
+(library1::NumericTest< T >) cw
+(library2::NumericTest< T >) cw
+(library2::TrimmedTest< T >) cw
+(testing::CodeLocationForTESTF) cw
+(testing::CodeLocationForTYPEDTEST< T >) cw
+(testing::CodeLocationForTYPEDTESTP< T >) cw
+(testing::CurrentTestInfoTest) cw
+(testing::ParseFlagsTest) cw
+(testing::SetUpTestCaseTest) cw
+(testing::SetUpTestSuiteTest) cw
+(testing::TestInfoTest) cw
+(testing::TestWithParam< T >) cw
+(testing::gmock_function_mocker_test::ExpectCallTest< T >) cw
+(testing::gmock_function_mocker_test::FunctionMockerTest< T >) cw
+(testing::gmock_function_mocker_test::MockMethodMockFunctionSignatureTest< F >) cw
+(testing::gmock_function_mocker_test::OverloadedMockMethodTest< T >) cw
+(testing::gmock_function_mocker_test::TemplateMockTest< T >) cw
+(testing::internal::ListenerTest) cw
+(testing::internal::TestSuiteWithCommentTest< T >) cw
+(testing::internal::UnitTestRecordPropertyTestHelper) cw
+(works_here::NotInstantiatedTypeTest< T >) cw
+(works_here::NotUsedTypeTest< T >) cw
+/boxwidth boxwidth marginwidth 2 mul add def
+/xspacing boxwidth distx add def
+/yspacing boxheight disty add def
+/scalefactor 
+  boxwidth cols mul distx cols 1 sub mul add
+  boxheight rows mul disty rows 1 sub mul add boundaspect mul 
+  max def
+boundx scalefactor div boundy scalefactor div scale
+
+% ----- classes -----
+
+ (testing::Test) 0.000000 86.000000 box
+ (testing::TestWithParam< int >) 1.000000 85.000000 box
+1.000000 85.000000 mark
+ (testing::TestWithParam< Unstreamable >) 1.000000 84.000000 box
+ (testing::TestWithParam< std::string >) 1.000000 83.000000 box
+1.000000 83.000000 mark
+ (testing::TestWithParam< CustomStruct >) 1.000000 82.000000 box
+ (testing::TestWithParam< MyEnums >) 1.000000 81.000000 box
+1.000000 81.000000 mark
+ (testing::TestWithParam< MyType >) 1.000000 80.000000 box
+1.000000 80.000000 mark
+ (testing::TestWithParam< bool >) 1.000000 79.000000 box
+1.000000 79.000000 mark
+ (TypedTest< T >) 1.000000 78.000000 box
+ (FooTest) 1.000000 77.000000 box
+ (CommonTest< T >) 1.000000 76.000000 box
+1.000000 76.000000 mark
+ (ContainerTest< T >) 1.000000 75.000000 box
+ (DetectNotInstantiatedTypesTest< T >) 1.000000 74.000000 box
+ (DisabledTest) 1.000000 73.000000 box
+ (DynamicFixture) 1.000000 72.000000 box
+1.000000 72.000000 mark
+ (DynamicUnitTestFixture) 1.000000 71.000000 box
+1.000000 71.000000 mark
+ (ExpectFailureTest) 1.000000 70.000000 box
+ (FailedTest) 1.000000 69.000000 box
+ (FatalFailureInFixtureConstructorTest) 1.000000 68.000000 box
+ (FatalFailureInSetUpTest) 1.000000 67.000000 box
+ (Fixture) 1.000000 66.000000 box
+ (FooTest) 1.000000 65.000000 box
+ (FooTestFixture) 1.000000 64.000000 box
+ (GMockOutputTest) 1.000000 63.000000 box
+ (MacroNamingTestNonParametrized) 1.000000 62.000000 box
+ (NonFatalFailureInFixtureConstructorTest) 1.000000 61.000000 box
+ (NonFatalFailureInSetUpTest) 1.000000 60.000000 box
+ (NonParameterizedBaseTest) 1.000000 59.000000 box
+1.000000 59.000000 mark
+ (Predicate1Test) 1.000000 58.000000 box
+ (Predicate2Test) 1.000000 57.000000 box
+ (Predicate3Test) 1.000000 56.000000 box
+ (Predicate4Test) 1.000000 55.000000 box
+ (Predicate5Test) 1.000000 54.000000 box
+ (PropertyOne) 1.000000 53.000000 box
+ (PropertyRecordingTest) 1.000000 52.000000 box
+ (PropertyTwo) 1.000000 51.000000 box
+ (ProtectedFixtureMethodsTest) 1.000000 50.000000 box
+ (SetupFailTest) 1.000000 49.000000 box
+ (SkippedTest) 1.000000 48.000000 box
+ (SuccessfulTest) 1.000000 47.000000 box
+ (TEST_F_before_TEST_in_same_test_case) 1.000000 46.000000 box
+ (TEST_before_TEST_F_in_same_test_case) 1.000000 45.000000 box
+ (TearDownFailTest) 1.000000 44.000000 box
+ (TestSuiteThatFailsToSetUp) 1.000000 43.000000 box
+ (TestSuiteThatSkipsInSetUp) 1.000000 42.000000 box
+ (TypeParamTest< T >) 1.000000 41.000000 box
+ (TypeParameterizedTestSuite< T >) 1.000000 40.000000 box
+ (TypeParameterizedTestSuite< T >) 1.000000 39.000000 box
+ (TypeParametrizedTestWithNames< T >) 1.000000 38.000000 box
+ (TypedTest< T >) 1.000000 37.000000 box
+ (TypedTest< T >) 1.000000 36.000000 box
+ (TypedTest< T >) 1.000000 35.000000 box
+ (TypedTest< T >) 1.000000 34.000000 box
+ (TypedTest1< T >) 1.000000 33.000000 box
+ (TypedTest2< T >) 1.000000 32.000000 box
+ (TypedTestP< T >) 1.000000 31.000000 box
+ (TypedTestP1< T >) 1.000000 30.000000 box
+ (TypedTestP2< T >) 1.000000 29.000000 box
+ (TypedTestSuitePStateTest) 1.000000 28.000000 box
+ (TypedTestWithNames< T >) 1.000000 27.000000 box
+ (TypedTestWithNames< T >) 1.000000 26.000000 box
+ (bar::MixedUpTestSuiteTest) 1.000000 25.000000 box
+ (bar::MixedUpTestSuiteWithSameTestNameTest) 1.000000 24.000000 box
+ (foo::MixedUpTestSuiteTest) 1.000000 23.000000 box
+ (foo::MixedUpTestSuiteWithSameTestNameTest) 1.000000 22.000000 box
+ (library1::NumericTest< T >) 1.000000 21.000000 box
+ (library2::NumericTest< T >) 1.000000 20.000000 box
+ (library2::TrimmedTest< T >) 1.000000 19.000000 box
+ (testing::CodeLocationForTESTF) 1.000000 18.000000 box
+ (testing::CodeLocationForTYPEDTEST< T >) 1.000000 17.000000 box
+ (testing::CodeLocationForTYPEDTESTP< T >) 1.000000 16.000000 box
+ (testing::CurrentTestInfoTest) 1.000000 15.000000 box
+ (testing::ParseFlagsTest) 1.000000 14.000000 box
+ (testing::SetUpTestCaseTest) 1.000000 13.000000 box
+ (testing::SetUpTestSuiteTest) 1.000000 12.000000 box
+ (testing::TestInfoTest) 1.000000 11.000000 box
+ (testing::TestWithParam< T >) 1.000000 10.000000 box
+1.000000 10.000000 mark
+ (testing::gmock_function_mocker_test::ExpectCallTest< T >) 1.000000 9.000000 box
+ (testing::gmock_function_mocker_test::FunctionMockerTest< T >) 1.000000 8.000000 box
+ (testing::gmock_function_mocker_test::MockMethodMockFunctionSignatureTest< F >) 1.000000 7.000000 box
+ (testing::gmock_function_mocker_test::OverloadedMockMethodTest< T >) 1.000000 6.000000 box
+ (testing::gmock_function_mocker_test::TemplateMockTest< T >) 1.000000 5.000000 box
+ (testing::internal::ListenerTest) 1.000000 4.000000 box
+ (testing::internal::TestSuiteWithCommentTest< T >) 1.000000 3.000000 box
+ (testing::internal::UnitTestRecordPropertyTestHelper) 1.000000 2.000000 box
+ (works_here::NotInstantiatedTypeTest< T >) 1.000000 1.000000 box
+ (works_here::NotUsedTypeTest< T >) 1.000000 0.000000 box
+
+% ----- relations -----
+
+solid
+1 0.000000 85.250000 out
+solid
+0 0.000000 85.500000 hedge
+solid
+0 0.000000 84.500000 hedge
+solid
+0 0.000000 83.500000 hedge
+solid
+0 0.000000 82.500000 hedge
+solid
+0 0.000000 81.500000 hedge
+solid
+0 0.000000 80.500000 hedge
+solid
+0 0.000000 79.500000 hedge
+solid
+0 0.000000 78.500000 hedge
+solid
+0 0.000000 77.500000 hedge
+solid
+0 0.000000 76.500000 hedge
+solid
+0 0.000000 75.500000 hedge
+solid
+0 0.000000 74.500000 hedge
+solid
+0 0.000000 73.500000 hedge
+solid
+0 0.000000 72.500000 hedge
+solid
+0 0.000000 71.500000 hedge
+solid
+0 0.000000 70.500000 hedge
+solid
+0 0.000000 69.500000 hedge
+solid
+0 0.000000 68.500000 hedge
+solid
+0 0.000000 67.500000 hedge
+solid
+0 0.000000 66.500000 hedge
+solid
+0 0.000000 65.500000 hedge
+solid
+0 0.000000 64.500000 hedge
+solid
+0 0.000000 63.500000 hedge
+solid
+0 0.000000 62.500000 hedge
+solid
+0 0.000000 61.500000 hedge
+solid
+0 0.000000 60.500000 hedge
+solid
+0 0.000000 59.500000 hedge
+solid
+0 0.000000 58.500000 hedge
+solid
+0 0.000000 57.500000 hedge
+solid
+0 0.000000 56.500000 hedge
+solid
+0 0.000000 55.500000 hedge
+solid
+0 0.000000 54.500000 hedge
+solid
+0 0.000000 53.500000 hedge
+solid
+0 0.000000 52.500000 hedge
+solid
+0 0.000000 51.500000 hedge
+solid
+0 0.000000 50.500000 hedge
+solid
+0 0.000000 49.500000 hedge
+solid
+0 0.000000 48.500000 hedge
+solid
+0 0.000000 47.500000 hedge
+solid
+0 0.000000 46.500000 hedge
+solid
+0 0.000000 45.500000 hedge
+solid
+0 0.000000 44.500000 hedge
+solid
+0 0.000000 43.500000 hedge
+solid
+0 0.000000 42.500000 hedge
+solid
+0 0.000000 41.500000 hedge
+solid
+0 0.000000 40.500000 hedge
+solid
+0 0.000000 39.500000 hedge
+solid
+0 0.000000 38.500000 hedge
+solid
+0 0.000000 37.500000 hedge
+solid
+0 0.000000 36.500000 hedge
+solid
+0 0.000000 35.500000 hedge
+solid
+0 0.000000 34.500000 hedge
+solid
+0 0.000000 33.500000 hedge
+solid
+0 0.000000 32.500000 hedge
+solid
+0 0.000000 31.500000 hedge
+solid
+0 0.000000 30.500000 hedge
+solid
+0 0.000000 29.500000 hedge
+solid
+0 0.000000 28.500000 hedge
+solid
+0 0.000000 27.500000 hedge
+solid
+0 0.000000 26.500000 hedge
+solid
+0 0.000000 25.500000 hedge
+solid
+0 0.000000 24.500000 hedge
+solid
+0 0.000000 23.500000 hedge
+solid
+0 0.000000 22.500000 hedge
+solid
+0 0.000000 21.500000 hedge
+solid
+0 0.000000 20.500000 hedge
+solid
+0 0.000000 19.500000 hedge
+solid
+0 0.000000 18.500000 hedge
+solid
+0 0.000000 17.500000 hedge
+solid
+0 0.000000 16.500000 hedge
+solid
+0 0.000000 15.500000 hedge
+solid
+0 0.000000 14.500000 hedge
+solid
+0 0.000000 13.500000 hedge
+solid
+0 0.000000 12.500000 hedge
+solid
+0 0.000000 11.500000 hedge
+solid
+0 0.000000 10.500000 hedge
+solid
+0 0.000000 9.500000 hedge
+solid
+0 0.000000 8.500000 hedge
+solid
+0 0.000000 7.500000 hedge
+solid
+0 0.000000 6.500000 hedge
+solid
+0 0.000000 5.500000 hedge
+solid
+0 0.000000 4.500000 hedge
+solid
+0 0.000000 3.500000 hedge
+solid
+0 0.000000 2.500000 hedge
+solid
+0 0.000000 1.500000 hedge
+solid
+0 0.000000 0.500000 hedge
+solid
+0.000000 86.000000 0.500000 vedge

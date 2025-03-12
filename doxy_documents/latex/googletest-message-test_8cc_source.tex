@@ -1,0 +1,190 @@
+\doxysection{googletest-\/message-\/test.cc}
+\hypertarget{googletest-message-test_8cc_source}{}\label{googletest-message-test_8cc_source}\index{/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/subprojects/googletest-\/1.15.2/googletest/test/googletest-\/message-\/test.cc@{/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/subprojects/googletest-\/1.15.2/googletest/test/googletest-\/message-\/test.cc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ 2005,\ Google\ Inc.}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ All\ rights\ reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Redistribution\ and\ use\ in\ source\ and\ binary\ forms,\ with\ or\ without}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ modification,\ are\ permitted\ provided\ that\ the\ following\ conditions\ are}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ met:}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ \ \ \ \ *\ Redistributions\ of\ source\ code\ must\ retain\ the\ above\ copyright}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ \ \ \ \ *\ Redistributions\ in\ binary\ form\ must\ reproduce\ the\ above}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ copyright\ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ in\ the\ documentation\ and/or\ other\ materials\ provided\ with\ the}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ \ \ \ \ *\ Neither\ the\ name\ of\ Google\ Inc.\ nor\ the\ names\ of\ its}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ contributors\ may\ be\ used\ to\ endorse\ or\ promote\ products\ derived\ from}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ this\ software\ without\ specific\ prior\ written\ permission.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ THE\ COPYRIGHT\ HOLDERS\ AND\ CONTRIBUTORS}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ "{}AS\ IS"{}\ AND\ ANY\ EXPRESS\ OR\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ LIMITED\ TO,\ THE\ IMPLIED\ WARRANTIES\ OF\ MERCHANTABILITY\ AND\ FITNESS\ FOR}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ A\ PARTICULAR\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO\ EVENT\ SHALL\ THE\ COPYRIGHT}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ OWNER\ OR\ CONTRIBUTORS\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ SPECIAL,\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ LIMITED\ TO,\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ DATA,\ OR\ PROFITS;\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ THEORY\ OF\ LIABILITY,\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ (INCLUDING\ NEGLIGENCE\ OR\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ OF\ THIS\ SOFTWARE,\ EVEN\ IF\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ Tests\ for\ the\ Message\ class.}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}gtest/gtest-\/message.h"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}gtest/gtest.h"{}}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#ifdef\ GTEST\_HAS\_ABSL}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ "{}absl/strings/str\_format.h"{}}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GTEST\_HAS\_ABSL}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{namespace\ }\{}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{using\ }::\mbox{\hyperlink{classtesting_1_1_message}{testing::Message}};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#ifdef\ GTEST\_HAS\_ABSL}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{struct\ }AbslStringifiablePoint\ \{}
+\DoxyCodeLine{00049\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ Sink>}
+\DoxyCodeLine{00050\ \ \ \textcolor{keyword}{friend}\ \textcolor{keywordtype}{void}\ AbslStringify(Sink\&\ sink,\ \textcolor{keyword}{const}\ AbslStringifiablePoint\&\ p)\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ absl::Format(\&sink,\ \textcolor{stringliteral}{"{}(\%d,\ \%d)"{}},\ p.x,\ p.y);}
+\DoxyCodeLine{00052\ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \textcolor{keywordtype}{int}\ x;}
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordtype}{int}\ y;}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GTEST\_HAS\_ABSL}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{comment}{//\ Tests\ the\ testing::Message\ class}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{//\ Tests\ the\ default\ constructor.}}
+\DoxyCodeLine{00062\ TEST(MessageTest,\ DefaultConstructor)\ \{}
+\DoxyCodeLine{00063\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_message}{Message}}\ msg;}
+\DoxyCodeLine{00064\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}"{}},\ msg.GetString());}
+\DoxyCodeLine{00065\ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{//\ Tests\ the\ copy\ constructor.}}
+\DoxyCodeLine{00068\ TEST(MessageTest,\ CopyConstructor)\ \{}
+\DoxyCodeLine{00069\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_message}{Message}}\ msg1(\textcolor{stringliteral}{"{}Hello"{}});}
+\DoxyCodeLine{00070\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_message}{Message}}\ msg2(msg1);}
+\DoxyCodeLine{00071\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}Hello"{}},\ msg2.GetString());}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{//\ Tests\ constructing\ a\ Message\ from\ a\ C-\/string.}}
+\DoxyCodeLine{00075\ TEST(MessageTest,\ ConstructsFromCString)\ \{}
+\DoxyCodeLine{00076\ \ \ \mbox{\hyperlink{class_message}{Message}}\ msg(\textcolor{stringliteral}{"{}Hello"{}});}
+\DoxyCodeLine{00077\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}Hello"{}},\ msg.GetString());}
+\DoxyCodeLine{00078\ \}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{comment}{//\ Tests\ streaming\ a\ float.}}
+\DoxyCodeLine{00081\ TEST(MessageTest,\ StreamsFloat)\ \{}
+\DoxyCodeLine{00082\ \ \ \textcolor{keyword}{const}\ std::string\ s\ =\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ 1.23456F\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ 2.34567F).GetString();}
+\DoxyCodeLine{00083\ \ \ \textcolor{comment}{//\ Both\ numbers\ should\ be\ printed\ with\ enough\ precision.}}
+\DoxyCodeLine{00084\ \ \ EXPECT\_PRED\_FORMAT2(testing::IsSubstring,\ \textcolor{stringliteral}{"{}1.234560"{}},\ s.c\_str());}
+\DoxyCodeLine{00085\ \ \ EXPECT\_PRED\_FORMAT2(testing::IsSubstring,\ \textcolor{stringliteral}{"{}\ 2.345669"{}},\ s.c\_str());}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{//\ Tests\ streaming\ a\ double.}}
+\DoxyCodeLine{00089\ TEST(MessageTest,\ StreamsDouble)\ \{}
+\DoxyCodeLine{00090\ \ \ \textcolor{keyword}{const}\ std::string\ s\ =}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ 1260570880.4555497\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ 1260572265.1954534)}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ .GetString();}
+\DoxyCodeLine{00093\ \ \ \textcolor{comment}{//\ Both\ numbers\ should\ be\ printed\ with\ enough\ precision.}}
+\DoxyCodeLine{00094\ \ \ EXPECT\_PRED\_FORMAT2(testing::IsSubstring,\ \textcolor{stringliteral}{"{}1260570880.45"{}},\ s.c\_str());}
+\DoxyCodeLine{00095\ \ \ EXPECT\_PRED\_FORMAT2(testing::IsSubstring,\ \textcolor{stringliteral}{"{}\ 1260572265.19"{}},\ s.c\_str());}
+\DoxyCodeLine{00096\ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{//\ Tests\ streaming\ a\ non-\/char\ pointer.}}
+\DoxyCodeLine{00099\ TEST(MessageTest,\ StreamsPointer)\ \{}
+\DoxyCodeLine{00100\ \ \ \textcolor{keywordtype}{int}\ n\ =\ 0;}
+\DoxyCodeLine{00101\ \ \ \textcolor{keywordtype}{int}*\ p\ =\ \&n;}
+\DoxyCodeLine{00102\ \ \ EXPECT\_NE(\textcolor{stringliteral}{"{}(null)"{}},\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ p).GetString());}
+\DoxyCodeLine{00103\ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{comment}{//\ Tests\ streaming\ a\ NULL\ non-\/char\ pointer.}}
+\DoxyCodeLine{00106\ TEST(MessageTest,\ StreamsNullPointer)\ \{}
+\DoxyCodeLine{00107\ \ \ \textcolor{keywordtype}{int}*\ p\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00108\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}(null)"{}},\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ p).GetString());}
+\DoxyCodeLine{00109\ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{//\ Tests\ streaming\ a\ C\ string.}}
+\DoxyCodeLine{00112\ TEST(MessageTest,\ StreamsCString)\ \{}
+\DoxyCodeLine{00113\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}Foo"{}},\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ \textcolor{stringliteral}{"{}Foo"{}}).GetString());}
+\DoxyCodeLine{00114\ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{comment}{//\ Tests\ streaming\ a\ NULL\ C\ string.}}
+\DoxyCodeLine{00117\ TEST(MessageTest,\ StreamsNullCString)\ \{}
+\DoxyCodeLine{00118\ \ \ \textcolor{keywordtype}{char}*\ p\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00119\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}(null)"{}},\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ p).GetString());}
+\DoxyCodeLine{00120\ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{comment}{//\ Tests\ streaming\ std::string.}}
+\DoxyCodeLine{00123\ TEST(MessageTest,\ StreamsString)\ \{}
+\DoxyCodeLine{00124\ \ \ const\ ::std::string\ str(\textcolor{stringliteral}{"{}Hello"{}});}
+\DoxyCodeLine{00125\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}Hello"{}},\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ str).GetString());}
+\DoxyCodeLine{00126\ \}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{comment}{//\ Tests\ that\ we\ can\ output\ strings\ containing\ embedded\ NULs.}}
+\DoxyCodeLine{00129\ TEST(MessageTest,\ StreamsStringWithEmbeddedNUL)\ \{}
+\DoxyCodeLine{00130\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ char\_array\_with\_nul[]\ =\ \textcolor{stringliteral}{"{}Here's\ a\ NUL\(\backslash\)0\ and\ some\ more\ string"{}};}
+\DoxyCodeLine{00131\ \ \ const\ ::std::string\ string\_with\_nul(char\_array\_with\_nul,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(char\_array\_with\_nul)\ -\/\ 1);}
+\DoxyCodeLine{00133\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}Here's\ a\ NUL\(\backslash\)\(\backslash\)0\ and\ some\ more\ string"{}},}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ string\_with\_nul).GetString());}
+\DoxyCodeLine{00135\ \}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{comment}{//\ Tests\ streaming\ a\ NUL\ char.}}
+\DoxyCodeLine{00138\ TEST(MessageTest,\ StreamsNULChar)\ \{}
+\DoxyCodeLine{00139\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)0"{}},\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ \textcolor{charliteral}{'\(\backslash\)0'}).GetString());}
+\DoxyCodeLine{00140\ \}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{comment}{//\ Tests\ streaming\ int.}}
+\DoxyCodeLine{00143\ TEST(MessageTest,\ StreamsInt)\ \{}
+\DoxyCodeLine{00144\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}123"{}},\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ 123).GetString());}
+\DoxyCodeLine{00145\ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#ifdef\ GTEST\_HAS\_ABSL}}
+\DoxyCodeLine{00148\ \textcolor{comment}{//\ Tests\ streaming\ a\ type\ with\ an\ AbslStringify\ definition.}}
+\DoxyCodeLine{00149\ TEST(MessageTest,\ StreamsAbslStringify)\ \{}
+\DoxyCodeLine{00150\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}(1,\ 2)"{}},\ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ AbslStringifiablePoint\{1,\ 2\}).GetString());}
+\DoxyCodeLine{00151\ \}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GTEST\_HAS\_ABSL}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{comment}{//\ Tests\ that\ basic\ IO\ manipulators\ (endl,\ ends,\ and\ flush)\ can\ be}}
+\DoxyCodeLine{00155\ \textcolor{comment}{//\ streamed\ to\ Message.}}
+\DoxyCodeLine{00156\ TEST(MessageTest,\ StreamsBasicIoManip)\ \{}
+\DoxyCodeLine{00157\ \ \ EXPECT\_EQ(}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Line\ 1.\(\backslash\)nA\ NUL\ char\ \(\backslash\)\(\backslash\)0\ in\ line\ 2."{}},}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ (\mbox{\hyperlink{class_message}{Message}}()\ <<\ \textcolor{stringliteral}{"{}Line\ 1."{}}\ <<\ std::endl}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{}A\ NUL\ char\ "{}}\ <<\ std::ends\ <<\ std::flush\ <<\ \textcolor{stringliteral}{"{}\ in\ line\ 2."{}})}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ .GetString());}
+\DoxyCodeLine{00162\ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{comment}{//\ Tests\ Message::GetString()}}
+\DoxyCodeLine{00165\ TEST(MessageTest,\ GetString)\ \{}
+\DoxyCodeLine{00166\ \ \ \mbox{\hyperlink{class_message}{Message}}\ msg;}
+\DoxyCodeLine{00167\ \ \ msg\ <<\ 1\ <<\ \textcolor{stringliteral}{"{}\ lamb"{}};}
+\DoxyCodeLine{00168\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}1\ lamb"{}},\ msg.GetString());}
+\DoxyCodeLine{00169\ \}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{comment}{//\ Tests\ streaming\ a\ Message\ object\ to\ an\ ostream.}}
+\DoxyCodeLine{00172\ TEST(MessageTest,\ StreamsToOStream)\ \{}
+\DoxyCodeLine{00173\ \ \ \mbox{\hyperlink{class_message}{Message}}\ msg(\textcolor{stringliteral}{"{}Hello"{}});}
+\DoxyCodeLine{00174\ \ \ ::std::stringstream\ ss;}
+\DoxyCodeLine{00175\ \ \ ss\ <<\ msg;}
+\DoxyCodeLine{00176\ \ \ EXPECT\_EQ(\textcolor{stringliteral}{"{}Hello"{}},\ testing::internal::StringStreamToString(\&ss));}
+\DoxyCodeLine{00177\ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{comment}{//\ Tests\ that\ a\ Message\ object\ doesn't\ take\ up\ too\ much\ stack\ space.}}
+\DoxyCodeLine{00180\ TEST(MessageTest,\ DoesNotTakeUpMuchStackSpace)\ \{}
+\DoxyCodeLine{00181\ \ \ EXPECT\_LE(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{class_message}{Message}}),\ 16U);}
+\DoxyCodeLine{00182\ \}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \}\ \ \textcolor{comment}{//\ namespace}}
+
+\end{DoxyCode}
