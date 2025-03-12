@@ -18,4 +18,9 @@ compile and run tests
 
 $ meson test -C build 
 
+# Building docs
+
+$ doxygen docs/Doxyfile
+
+
 
