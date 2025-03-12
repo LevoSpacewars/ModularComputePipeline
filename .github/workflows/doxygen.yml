@@ -17,6 +17,9 @@ jobs:
 
       - name: Generate Documentation
         run: doxygen docs/Doxyfile
+        
+      - name: List generated files
+        run: ls -R docs/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

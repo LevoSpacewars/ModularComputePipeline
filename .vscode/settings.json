@@ -70,5 +70,6 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp"
-    }
+    },
+    "mesonbuild.configureOnOpen": false
 }

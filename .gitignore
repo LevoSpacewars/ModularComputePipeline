@@ -2,3 +2,4 @@ subprojects/google*
 subprojects/packagecache
 build/
 .DS_Store
+.vscode
