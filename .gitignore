@@ -1,5 +1,4 @@
 subprojects/google*
 subprojects/packagecache
 build/
-doxy_documents/
-!doxy_documents/Doxyfile
+
