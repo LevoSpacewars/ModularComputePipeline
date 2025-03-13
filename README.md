@@ -22,10 +22,10 @@ $ meson test -C build
 
 $ doxygen docs/Doxyfile
 
-
+# Documentation
 https://levospacewars.github.io/ModularComputePipeline/files.html
 
-
+# Development Guidance
 follow the diagram below for how branching should occur: Git Flow method
 <img width="595" alt="image" src="https://github.com/user-attachments/assets/65c6accd-4973-42e5-9e27-d38d34bc28ee" />
 
