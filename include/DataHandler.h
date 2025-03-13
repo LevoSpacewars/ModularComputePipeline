@@ -14,8 +14,6 @@ struct DataContainer
 };
 
 
-
-
 class DataHandler
 {
 public:
@@ -26,26 +24,19 @@ public:
     {
         static_assert(!std::is_pointer<T>::value, "DataHandler::addData<T>: T must not be a pointer");
         if (data.contains(ID)) throw std::runtime_error("ID: " + ID + " - is already defined"); // Could we make this more verbose? like by integrating this with somekindof logger?
-        
         DataContainer temp{std::any(std::move(value)), &typeid(T)};
         data[ID] = temp;
     }
+
     template <typename T>
-    const T *getData(std::string ID)
+    T * getData(std::string ID)
     {
         static_assert(!std::is_pointer<T>::value, "DataHandler::addData<T>: T must not be a pointer");
-        if (data.contains(ID))
-        {
-            const DataContainer &stored = data[ID];
-            if (*stored.value_type == typeid(T))
-            {
-                return std::any_cast<T>(&stored.value);
-            }
-            return nullptr;
-        }
+        if (data.contains(ID)) return std::any_cast<T>(&data[ID].data);
         return nullptr;
     }
 
 private:
+
     std::unordered_map<std::string, DataContainer> data;
 };
