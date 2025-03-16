@@ -46,9 +46,11 @@ class FutureData{
     /// fd.setValue(42);
     /// int *value = fd.getValue<int>(); // returns a pointer to the stored value
     /// @endcode
-    template<typename T>
-    T * getValue(){
+    template<typename U>
+    U * getValue(){
+        using T = std::decay_t<U>; // remove references and cv-qualifiers
         static_assert(!std::is_pointer<T>::value, "FutureData::getValue<T>: T must not be a pointer");
+        
 
         if (!this->isReady()) throw std::runtime_error("FutureData::getValue<T>: not fulfilled");        
         return &std::any_cast<T&>(*this->ptr.get());
@@ -190,13 +192,15 @@ public:
     /// DataHandler dh;
     /// dh.addData("myData", 42); // adds data with ID "myData"
     /// @endcode
-    template <typename T>
-    void addData(const std::string &ID, T && value)
+    template <typename U>
+    void addData(const std::string &ID, U && value)
     {
+        using T = std::decay_t<U>; // remove references and cv-qualifiers
         static_assert(!std::is_pointer<T>::value, "DataHandler::addData<T>: T must not be a pointer");
-        if (data.contains(ID)) throw std::runtime_error("ID: " + ID + " - is already defined"); // Could we make this more verbose? like by integrating this with somekindof logger?
-        data[ID] = FutureData(); // store the data in the map
+        if (!data.contains(ID)) data[ID] = FutureData();
+        else if (isDataReady(ID)) throw std::runtime_error("ID: " + ID + " - is already defined");
         data[ID].setValue<T>(std::move(value)); // set the value
+
     }
 
     /// @brief Retrieves valid data associated with a unique ID from the DataHandler.
@@ -212,10 +216,13 @@ public:
     /// int *value = dh.getData<int>("myData"); // retrieves the value associated with "myData"
     /// @endcode
     /// @note This method checks if the data is ready before retrieving it.
-    template <typename T>
-    T * getData(std::string ID)
+    template <typename U>
+    U * getData(std::string ID)
     {
+        using T = std::decay_t<U>;
+
         static_assert(!std::is_pointer<T>::value, "DataHandler::addData<T>: T must not be a pointer");
+        if (!isDataReady(ID)) throw std::runtime_error("ID: " + ID + " - is not ready"); // check if the data is ready
         if (data.contains(ID)) return data[ID].getValue<T>(); // get the data from the map
         throw std::runtime_error("ID: " + ID + " - is not defined");
     }
@@ -236,7 +243,6 @@ public:
     /// @param ID The unique identifier for the data.
     /// @return Returns a FutureDataPtr pointing to the FutureData object associated with the ID.
     /// @note If the ID does not exist, a new FutureData object is created and associated with the ID.
-
     FutureDataPtr requestFutureData(std::string ID) // NOTE: THIS MAY HAVE AN ISSUE WITH THE FUTUREDATA TYPE VARIABLE BEING SET AT A LATER TIME SINCE 
     {
         if (data.contains(ID)) return FutureDataPtr(&data[ID]); // return a pointer to the data
