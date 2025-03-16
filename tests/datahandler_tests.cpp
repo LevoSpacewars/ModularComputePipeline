@@ -26,3 +26,11 @@ TEST(DataHandler, addData_missingid_exception)
     dh.addData("a", a);
     EXPECT_THROW(dh.getData<int>("b"), std::runtime_error);
 }
+
+TEST(DataHandler, addData_alreadydefined_exception)
+{
+    DataHandler dh;
+    int a = 5;
+    dh.addData("a", a);
+    EXPECT_THROW(dh.addData("a", a), std::runtime_error);
+}
