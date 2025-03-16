@@ -4,7 +4,7 @@ project('ModularComputePipeline', 'cpp',
 
 
 
-src_code = files()
+src_code = files('src/Integrator.cpp')
 
 subdir('src')
 subdir('tests')
