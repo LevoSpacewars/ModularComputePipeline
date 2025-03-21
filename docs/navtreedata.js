@@ -35,13 +35,14 @@ var NAVTREE =
     ] ],
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ]
-    ] ]
+    ] ],
+    [ "Examples", "examples.html", "examples" ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"_compute_engine_8h_source.html"
+"_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

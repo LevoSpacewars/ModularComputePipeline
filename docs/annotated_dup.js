@@ -1,7 +1,8 @@
 var annotated_dup =
 [
-    [ "DataContainer", "struct_data_container.html", null ],
-    [ "DataHandler", "class_data_handler.html", null ],
+    [ "DataHandler", "class_data_handler.html", "class_data_handler" ],
+    [ "FutureData", "class_future_data.html", "class_future_data" ],
+    [ "FutureDataPtr", "class_future_data_ptr.html", "class_future_data_ptr" ],
     [ "IParser", "class_i_parser.html", null ],
-    [ "sample_class", "classsample__class.html", "classsample__class" ]
+    [ "pluginManager", "classplugin_manager.html", "classplugin_manager" ]
 ];

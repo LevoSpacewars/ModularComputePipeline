@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['iparser_0',['IParser',['../class_i_parser.html',1,'']]]
+  ['futuredata_0',['FutureData',['../class_future_data.html',1,'']]],
+  ['futuredataptr_1',['FutureDataPtr',['../class_future_data_ptr.html',1,'']]]
 ];

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['datacontainer_0',['DataContainer',['../struct_data_container.html',1,'']]],
-  ['datahandler_1',['DataHandler',['../class_data_handler.html',1,'']]]
+  ['autoloaddir_0',['autoLoadDIR',['../classplugin_manager.html#a0f42d3bfb691815ca83ed133a73f57bb',1,'pluginManager']]]
 ];

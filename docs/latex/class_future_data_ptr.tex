@@ -1,0 +1,89 @@
+\doxysection{Future\+Data\+Ptr Class Reference}
+\hypertarget{class_future_data_ptr}{}\label{class_future_data_ptr}\index{FutureDataPtr@{FutureDataPtr}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_future_data_ptr_ad670fe5465cd8adb6b8c4221d28314c2}\label{class_future_data_ptr_ad670fe5465cd8adb6b8c4221d28314c2} 
+{\bfseries Future\+Data\+Ptr} (\mbox{\hyperlink{class_future_data}{Future\+Data}} \texorpdfstring{$\ast$}{*}p)
+\item 
+\Hypertarget{class_future_data_ptr_a4e22858568b08443630ec9134e5c8d7b}\label{class_future_data_ptr_a4e22858568b08443630ec9134e5c8d7b} 
+{\bfseries Future\+Data\+Ptr} (const \mbox{\hyperlink{class_future_data_ptr}{Future\+Data\+Ptr}} \&other)
+\item 
+\Hypertarget{class_future_data_ptr_a9141ead8446d2e26e45358a805533354}\label{class_future_data_ptr_a9141ead8446d2e26e45358a805533354} 
+{\bfseries Future\+Data\+Ptr} (\mbox{\hyperlink{class_future_data_ptr}{Future\+Data\+Ptr}} \&\&other)
+\item 
+\Hypertarget{class_future_data_ptr_a75d0fa4f00e90b46507e25a875338c93}\label{class_future_data_ptr_a75d0fa4f00e90b46507e25a875338c93} 
+\mbox{\hyperlink{class_future_data_ptr}{Future\+Data\+Ptr}} \& {\bfseries operator=} (const \mbox{\hyperlink{class_future_data_ptr}{Future\+Data\+Ptr}} \&other)
+\item 
+\Hypertarget{class_future_data_ptr_a9b855017c814f99c5970449de73757c2}\label{class_future_data_ptr_a9b855017c814f99c5970449de73757c2} 
+\mbox{\hyperlink{class_future_data_ptr}{Future\+Data\+Ptr}} \& {\bfseries operator=} (\mbox{\hyperlink{class_future_data_ptr}{Future\+Data\+Ptr}} \&\&other)
+\item 
+bool \mbox{\hyperlink{class_future_data_ptr_a2a8b36573a97c1323f8c1e386a85bc5d}{is\+Ready}} () const
+\begin{DoxyCompactList}\small\item\em This method checks if the \doxylink{class_future_data}{Future\+Data} object pointed to by the \doxylink{class_future_data_ptr}{Future\+Data\+Ptr} is ready (i.\+e., if it has been fulfilled). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T$>$ }\\T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_future_data_ptr_a62354eae7252b8d1778622e28df0dc75}{get\+Value}} () const
+\begin{DoxyCompactList}\small\item\em This method retrieves the value stored in the \doxylink{class_future_data}{Future\+Data} object pointed to by the \doxylink{class_future_data_ptr}{Future\+Data\+Ptr}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}}.\end{Desc}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_future_data_ptr_a62354eae7252b8d1778622e28df0dc75}\index{FutureDataPtr@{FutureDataPtr}!getValue@{getValue}}
+\index{getValue@{getValue}!FutureDataPtr@{FutureDataPtr}}
+\doxysubsubsection{\texorpdfstring{getValue()}{getValue()}}
+{\footnotesize\ttfamily \label{class_future_data_ptr_a62354eae7252b8d1778622e28df0dc75} 
+template$<$typename T$>$ \\
+T \texorpdfstring{$\ast$}{*} Future\+Data\+Ptr\+::get\+Value (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method retrieves the value stored in the \doxylink{class_future_data}{Future\+Data} object pointed to by the \doxylink{class_future_data_ptr}{Future\+Data\+Ptr}. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & \\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyNote}{Note}
+T must not be a pointer type and must be convertible to std\+::any. 
+\end{DoxyNote}
+\begin{DoxyReturn}{Returns}
+Returns a pointer to the value stored in the \doxylink{class_future_data}{Future\+Data} object. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & if the \doxylink{class_future_data}{Future\+Data} object is not fulfilled. \\
+\hline
+{\em std\+::bad\+\_\+any\+\_\+cast} & if the stored value cannot be cast to the requested type T. \\
+\hline
+\end{DoxyExceptions}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}}.\end{Desc}
+\Hypertarget{class_future_data_ptr_a2a8b36573a97c1323f8c1e386a85bc5d}\index{FutureDataPtr@{FutureDataPtr}!isReady@{isReady}}
+\index{isReady@{isReady}!FutureDataPtr@{FutureDataPtr}}
+\doxysubsubsection{\texorpdfstring{isReady()}{isReady()}}
+{\footnotesize\ttfamily \label{class_future_data_ptr_a2a8b36573a97c1323f8c1e386a85bc5d} 
+bool Future\+Data\+Ptr\+::is\+Ready (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method checks if the \doxylink{class_future_data}{Future\+Data} object pointed to by the \doxylink{class_future_data_ptr}{Future\+Data\+Ptr} is ready (i.\+e., if it has been fulfilled). 
+
+\begin{DoxyReturn}{Returns}
+Returns true if the \doxylink{class_future_data}{Future\+Data} object is ready, false otherwise. 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+It checks if the pointer is not null and if the \doxylink{class_future_data}{Future\+Data} object is ready. 
+\end{DoxyNote}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}}.\end{Desc}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Data\+Handler.\+h\end{DoxyCompactItemize}

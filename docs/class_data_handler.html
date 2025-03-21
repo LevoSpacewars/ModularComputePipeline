@@ -108,18 +108,117 @@ $(function(){initNavTree('class_data_handler.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">DataHandler Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>A class that manages a collection of <a class="el" href="class_future_data.html" title="A class that encapsulates a future data value, allowing for deferred initialization and retrieval....">FutureData</a> objects, allowing for deferred initialization and retrieval of data by ID.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_data_handler_8h_source.html">DataHandler.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adecfc3e0f801b13f47cbb41da6cc34f3" id="r_adecfc3e0f801b13f47cbb41da6cc34f3"><td class="memTemplParams" colspan="2"><a id="adecfc3e0f801b13f47cbb41da6cc34f3" name="adecfc3e0f801b13f47cbb41da6cc34f3"></a>
-template&lt;typename T&gt; </td></tr>
-<tr class="memitem:adecfc3e0f801b13f47cbb41da6cc34f3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>addData</b> (const std::string &amp;ID, T &amp;value)</td></tr>
-<tr class="separator:adecfc3e0f801b13f47cbb41da6cc34f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7568f8049a7dc91f54ad250826df2eb4" id="r_a7568f8049a7dc91f54ad250826df2eb4"><td class="memTemplParams" colspan="2"><a id="a7568f8049a7dc91f54ad250826df2eb4" name="a7568f8049a7dc91f54ad250826df2eb4"></a>
-template&lt;typename T&gt; </td></tr>
-<tr class="memitem:a7568f8049a7dc91f54ad250826df2eb4"><td class="memTemplItemLeft" align="right" valign="top">const T *&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getData</b> (std::string ID)</td></tr>
-<tr class="separator:a7568f8049a7dc91f54ad250826df2eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaaad5b42655db11b5b848ade3cf1d983" id="r_aaaad5b42655db11b5b848ade3cf1d983"><td class="memTemplParams" colspan="2"><a id="aaaad5b42655db11b5b848ade3cf1d983" name="aaaad5b42655db11b5b848ade3cf1d983"></a>
+template&lt;typename U&gt; </td></tr>
+<tr class="memitem:aaaad5b42655db11b5b848ade3cf1d983"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>addData</b> (const std::string &amp;ID, U &amp;&amp;value)</td></tr>
+<tr class="separator:aaaad5b42655db11b5b848ade3cf1d983"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21ae772876a2b3e838ca00dab1e3ebe2" id="r_a21ae772876a2b3e838ca00dab1e3ebe2"><td class="memTemplParams" colspan="2"><a id="a21ae772876a2b3e838ca00dab1e3ebe2" name="a21ae772876a2b3e838ca00dab1e3ebe2"></a>
+template&lt;typename U&gt; </td></tr>
+<tr class="memitem:a21ae772876a2b3e838ca00dab1e3ebe2"><td class="memTemplItemLeft" align="right" valign="top">U *&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getData</b> (std::string ID)</td></tr>
+<tr class="separator:a21ae772876a2b3e838ca00dab1e3ebe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04e4c614fdf7768af981998aa0b33026" id="r_a04e4c614fdf7768af981998aa0b33026"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04e4c614fdf7768af981998aa0b33026">isDataReady</a> (std::string ID)</td></tr>
+<tr class="memdesc:a04e4c614fdf7768af981998aa0b33026"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the data associated with a unique ID is ready (i.e., if it has been fulfilled).  <br /></td></tr>
+<tr class="separator:a04e4c614fdf7768af981998aa0b33026"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59b9a8c84fda3f22240540a085bd9657" id="r_a59b9a8c84fda3f22240540a085bd9657"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_future_data_ptr.html">FutureDataPtr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59b9a8c84fda3f22240540a085bd9657">requestFutureData</a> (std::string ID)</td></tr>
+<tr class="memdesc:a59b9a8c84fda3f22240540a085bd9657"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests a <a class="el" href="class_future_data_ptr.html">FutureDataPtr</a> for a specific ID, allowing for deferred initialization and retrieval of data.  <br /></td></tr>
+<tr class="separator:a59b9a8c84fda3f22240540a085bd9657"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6df10838ef8a9e92b000211abe50d7ac" id="r_a6df10838ef8a9e92b000211abe50d7ac"><td class="memItemLeft" align="right" valign="top"><a id="a6df10838ef8a9e92b000211abe50d7ac" name="a6df10838ef8a9e92b000211abe50d7ac"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>removeData</b> (std::string ID)</td></tr>
+<tr class="separator:a6df10838ef8a9e92b000211abe50d7ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A class that manages a collection of <a class="el" href="class_future_data.html" title="A class that encapsulates a future data value, allowing for deferred initialization and retrieval....">FutureData</a> objects, allowing for deferred initialization and retrieval of data by ID. </p>
+<dl class="section note"><dt>Note</dt><dd>This class provides methods to add, retrieve, check readiness, and remove data associated with a unique ID. </dd>
+<dd>
+It uses an unordered_map to store <a class="el" href="class_future_data.html" title="A class that encapsulates a future data value, allowing for deferred initialization and retrieval....">FutureData</a> objects, allowing for efficient access and management. </dd>
+<dd>
+The class also provides a method to request a <a class="el" href="class_future_data_ptr.html">FutureDataPtr</a> for a specific ID, which can be used to manage the <a class="el" href="class_future_data.html" title="A class that encapsulates a future data value, allowing for deferred initialization and retrieval....">FutureData</a> object. </dd>
+<dd>
+The class uses static assertions to ensure that the type T is not a pointer and is convertible to std::any. </dd></dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example.html#_a8">/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/include/DataHandler.h</a>.</dd>
+</dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a04e4c614fdf7768af981998aa0b33026" name="a04e4c614fdf7768af981998aa0b33026"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04e4c614fdf7768af981998aa0b33026">&#9670;&#160;</a></span>isDataReady()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DataHandler::isDataReady </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>ID</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks if the data associated with a unique ID is ready (i.e., if it has been fulfilled). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ID</td><td>The unique identifier for the data. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if the data is ready, false otherwise. </dd></dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example.html#a9">/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/include/DataHandler.h</a>.</dd>
+</dl>
+
+</div>
+</div>
+<a id="a59b9a8c84fda3f22240540a085bd9657" name="a59b9a8c84fda3f22240540a085bd9657"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59b9a8c84fda3f22240540a085bd9657">&#9670;&#160;</a></span>requestFutureData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_future_data_ptr.html">FutureDataPtr</a> DataHandler::requestFutureData </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>ID</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Requests a <a class="el" href="class_future_data_ptr.html">FutureDataPtr</a> for a specific ID, allowing for deferred initialization and retrieval of data. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ID</td><td>The unique identifier for the data. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a <a class="el" href="class_future_data_ptr.html">FutureDataPtr</a> pointing to the <a class="el" href="class_future_data.html" title="A class that encapsulates a future data value, allowing for deferred initialization and retrieval....">FutureData</a> object associated with the ID. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the ID does not exist, a new <a class="el" href="class_future_data.html" title="A class that encapsulates a future data value, allowing for deferred initialization and retrieval....">FutureData</a> object is created and associated with the ID. </dd></dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example.html#a10">/Users/nicholaspatapoff/Documents/GitHub/ModularComputePipeline/include/DataHandler.h</a>.</dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/<a class="el" href="_data_handler_8h_source.html">DataHandler.h</a></li>
 </ul>

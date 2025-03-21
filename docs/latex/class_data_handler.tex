@@ -1,14 +1,95 @@
 \doxysection{Data\+Handler Class Reference}
 \hypertarget{class_data_handler}{}\label{class_data_handler}\index{DataHandler@{DataHandler}}
+
+
+A class that manages a collection of \doxylink{class_future_data}{Future\+Data} objects, allowing for deferred initialization and retrieval of data by ID.  
+
+
+
+
+{\ttfamily \#include $<$Data\+Handler.\+h$>$}
+
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{class_data_handler_adecfc3e0f801b13f47cbb41da6cc34f3}\label{class_data_handler_adecfc3e0f801b13f47cbb41da6cc34f3} 
-{\footnotesize template$<$typename T$>$ }\\void {\bfseries add\+Data} (const std\+::string \&ID, T \&value)
+\Hypertarget{class_data_handler_aaaad5b42655db11b5b848ade3cf1d983}\label{class_data_handler_aaaad5b42655db11b5b848ade3cf1d983} 
+{\footnotesize template$<$typename U$>$ }\\void {\bfseries add\+Data} (const std\+::string \&ID, U \&\&value)
 \item 
-\Hypertarget{class_data_handler_a7568f8049a7dc91f54ad250826df2eb4}\label{class_data_handler_a7568f8049a7dc91f54ad250826df2eb4} 
-{\footnotesize template$<$typename T$>$ }\\const T \texorpdfstring{$\ast$}{*} {\bfseries get\+Data} (std\+::string ID)
+\Hypertarget{class_data_handler_a21ae772876a2b3e838ca00dab1e3ebe2}\label{class_data_handler_a21ae772876a2b3e838ca00dab1e3ebe2} 
+{\footnotesize template$<$typename U$>$ }\\U \texorpdfstring{$\ast$}{*} {\bfseries get\+Data} (std\+::string ID)
+\item 
+bool \mbox{\hyperlink{class_data_handler_a04e4c614fdf7768af981998aa0b33026}{is\+Data\+Ready}} (std\+::string ID)
+\begin{DoxyCompactList}\small\item\em Checks if the data associated with a unique ID is ready (i.\+e., if it has been fulfilled). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_future_data_ptr}{Future\+Data\+Ptr}} \mbox{\hyperlink{class_data_handler_a59b9a8c84fda3f22240540a085bd9657}{request\+Future\+Data}} (std\+::string ID)
+\begin{DoxyCompactList}\small\item\em Requests a \doxylink{class_future_data_ptr}{Future\+Data\+Ptr} for a specific ID, allowing for deferred initialization and retrieval of data. \end{DoxyCompactList}\item 
+\Hypertarget{class_data_handler_a6df10838ef8a9e92b000211abe50d7ac}\label{class_data_handler_a6df10838ef8a9e92b000211abe50d7ac} 
+void {\bfseries remove\+Data} (std\+::string ID)
 \end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A class that manages a collection of \doxylink{class_future_data}{Future\+Data} objects, allowing for deferred initialization and retrieval of data by ID. 
+
+\begin{DoxyNote}{Note}
+This class provides methods to add, retrieve, check readiness, and remove data associated with a unique ID. 
+
+It uses an unordered\+\_\+map to store \doxylink{class_future_data}{Future\+Data} objects, allowing for efficient access and management. 
+
+The class also provides a method to request a \doxylink{class_future_data_ptr}{Future\+Data\+Ptr} for a specific ID, which can be used to manage the \doxylink{class_future_data}{Future\+Data} object. 
+
+The class uses static assertions to ensure that the type T is not a pointer and is convertible to std\+::any. 
+\end{DoxyNote}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}}.\end{Desc}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_data_handler_a04e4c614fdf7768af981998aa0b33026}\index{DataHandler@{DataHandler}!isDataReady@{isDataReady}}
+\index{isDataReady@{isDataReady}!DataHandler@{DataHandler}}
+\doxysubsubsection{\texorpdfstring{isDataReady()}{isDataReady()}}
+{\footnotesize\ttfamily \label{class_data_handler_a04e4c614fdf7768af981998aa0b33026} 
+bool Data\+Handler\+::is\+Data\+Ready (\begin{DoxyParamCaption}\item[{std\+::string}]{ID}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks if the data associated with a unique ID is ready (i.\+e., if it has been fulfilled). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & The unique identifier for the data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns true if the data is ready, false otherwise. 
+\end{DoxyReturn}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}}.\end{Desc}
+\Hypertarget{class_data_handler_a59b9a8c84fda3f22240540a085bd9657}\index{DataHandler@{DataHandler}!requestFutureData@{requestFutureData}}
+\index{requestFutureData@{requestFutureData}!DataHandler@{DataHandler}}
+\doxysubsubsection{\texorpdfstring{requestFutureData()}{requestFutureData()}}
+{\footnotesize\ttfamily \label{class_data_handler_a59b9a8c84fda3f22240540a085bd9657} 
+\mbox{\hyperlink{class_future_data_ptr}{Future\+Data\+Ptr}} Data\+Handler\+::request\+Future\+Data (\begin{DoxyParamCaption}\item[{std\+::string}]{ID}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Requests a \doxylink{class_future_data_ptr}{Future\+Data\+Ptr} for a specific ID, allowing for deferred initialization and retrieval of data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & The unique identifier for the data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns a \doxylink{class_future_data_ptr}{Future\+Data\+Ptr} pointing to the \doxylink{class_future_data}{Future\+Data} object associated with the ID. 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+If the ID does not exist, a new \doxylink{class_future_data}{Future\+Data} object is created and associated with the ID. 
+\end{DoxyNote}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}}.\end{Desc}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

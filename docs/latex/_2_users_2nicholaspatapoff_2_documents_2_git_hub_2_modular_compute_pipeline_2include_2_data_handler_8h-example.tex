@@ -1,0 +1,200 @@
+\doxysection{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}
+\hypertarget{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{}\label{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}This method retrieves the value stored in the \doxylink{class_future_data}{Future\+Data} object.
+
+This method retrieves the value stored in the \doxylink{class_future_data}{Future\+Data} object.\begin{DoxyNote}{Note}
+It throws a runtime error if the \doxylink{class_future_data}{Future\+Data} object is not fulfilled (i.\+e., if it does not contain a value). 
+\end{DoxyNote}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & \\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyNote}{Note}
+T must not be a pointer type and must be convertible to std\+::any. 
+\end{DoxyNote}
+\begin{DoxyReturn}{Returns}
+Returns a pointer to the value stored in the \doxylink{class_future_data}{Future\+Data} object. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & if the \doxylink{class_future_data}{Future\+Data} object is not fulfilled. \\
+\hline
+{\em std\+::bad\+\_\+any\+\_\+cast} & if the stored value cannot be cast to the requested type T. \\
+\hline
+{\em std\+::bad\+\_\+cast} & if the stored value cannot be cast to the requested type T.\\
+\hline
+\end{DoxyExceptions}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_future_data}{FutureData}}\ fd;}
+\DoxyCodeLine{fd.setValue(42);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ *value\ =\ fd.getValue<\textcolor{keywordtype}{int}>();\ \textcolor{comment}{//\ returns\ a\ pointer\ to\ the\ stored\ value}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <any>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <exception>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ make\ a\ struct\ that\ takes\ in\ any\ kind\ of\ data,}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{class\ }\mbox{\hyperlink{class_future_data_ptr}{FutureDataPtr}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{class\ }\mbox{\hyperlink{class_future_data}{FutureData}}}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_future_data_ad74b7532abbad3891c001e6631cd6e25}{isReady}}()}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>ptr.get();}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ U>}
+\DoxyCodeLine{\ \ \ \ U\ *getValue()}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }T\ =\ std::decay\_t<U>;\ \textcolor{comment}{//\ remove\ references\ and\ cv-\/qualifiers}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static\_assert}(!std::is\_pointer<T>::value,\ \textcolor{stringliteral}{"{}FutureData::getValue<T>:\ T\ must\ not\ be\ a\ pointer"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!this-\/>\mbox{\hyperlink{class_future_data_ad74b7532abbad3891c001e6631cd6e25}{isReady}}())}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}FutureData::getValue<T>:\ not\ fulfilled"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&std::any\_cast<T\ \&>(*this-\/>ptr.get());}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}\ setValue(std::shared\_ptr<T>\ \&\&p)}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static\_assert}(!std::is\_pointer<T>::value,\ \textcolor{stringliteral}{"{}PromisedData::fulfill<T>:\ T\ must\ not\ be\ a\ pointer"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static\_assert}(std::is\_convertible<T,\ std::any>::value,\ \textcolor{stringliteral}{"{}PromisedData::fulfill<T>:\ T\ must\ be\ convertible\ to\ std::any"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!p)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}PromisedData::fulfill<T>:\ p\ is\ null"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (this-\/>\mbox{\hyperlink{class_future_data_ad74b7532abbad3891c001e6631cd6e25}{isReady}}())}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}PromisedData::fulfill<T>:\ already\ fulfilled"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ this-\/>ptr\ =\ std::dynamic\_pointer\_cast<std::any>(std::move(p));}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}\ setValue(T\ \&\&value)}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ this-\/>setValue(std::make\_shared<std::any>(std::move(value)));}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ FutureData()\ :\ ptr(nullptr)\ \{\}\ \ \ \textcolor{comment}{//\ default\ constructor}}
+\DoxyCodeLine{\ \ \ \ \string~FutureData()\ \{\ ptr\ =\ \textcolor{keyword}{nullptr};\ \}\ \textcolor{comment}{//\ destructor}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ std::type\_info\ *type;}
+\DoxyCodeLine{\ \ \ \ std::shared\_ptr<std::any>\ ptr\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{class\ }\mbox{\hyperlink{class_future_data_ptr}{FutureDataPtr}}}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{\ \ \ \ FutureDataPtr(FutureData\ *p)\ :\ ptr(p)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ constructor}}
+\DoxyCodeLine{\ \ \ \ FutureDataPtr()\ :\ ptr(nullptr)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ default\ constructor}}
+\DoxyCodeLine{\ \ \ \ FutureDataPtr(\textcolor{keyword}{const}\ FutureDataPtr\ \&other)\ :\ ptr(other.ptr)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ copy\ constructor}}
+\DoxyCodeLine{\ \ \ \ FutureDataPtr(FutureDataPtr\ \&\&other)\ :\ ptr(other.ptr)\ \{\ other.ptr\ =\ \textcolor{keyword}{nullptr};\ \}\ \textcolor{comment}{//\ move\ constructor}}
+\DoxyCodeLine{\ \ \ \ \string~FutureDataPtr()\ \{\ ptr\ =\ \textcolor{keyword}{nullptr};\ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ destructor}}
+\DoxyCodeLine{\ \ \ \ FutureDataPtr\ \&operator=(\textcolor{keyword}{const}\ FutureDataPtr\ \&other)}
+\DoxyCodeLine{\ \ \ \ \{\ \textcolor{comment}{//\ copy\ assignment}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{this}\ !=\ \&other)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ptr\ =\ other.ptr;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ FutureDataPtr\ \&operator=(FutureDataPtr\ \&\&other)}
+\DoxyCodeLine{\ \ \ \ \{\ \textcolor{comment}{//\ move\ assignment}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{this}\ !=\ \&other)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ptr\ =\ other.ptr;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ other.ptr\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_future_data_ptr_a2a8b36573a97c1323f8c1e386a85bc5d}{isReady}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ptr\ !=\ \textcolor{keyword}{nullptr}\ \&\&\ ptr-\/>isReady();\ \}\ \textcolor{comment}{//\ check\ if\ the\ pointer\ is\ valid\ and\ fulfilled}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{\ \ \ \ T\ *\mbox{\hyperlink{class_future_data_ptr_a62354eae7252b8d1778622e28df0dc75}{getValue}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\textcolor{keyword}{\ \ \ \ }\{\ \textcolor{comment}{//\ get\ the\ data\ as}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_future_data_ptr_a2a8b36573a97c1323f8c1e386a85bc5d}{isReady}}())}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}FutureDataPtr::getValue<T>:\ Data\ is\ not\ ready\ yet"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr-\/>getValue<T>();\ \textcolor{comment}{//\ call\ the\ get\ method\ of\ the\ FutureData\ object}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{\ \ \ \ FutureData\ *ptr;\ \textcolor{comment}{//\ pointer\ to\ the\ FutureData\ object}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{class\ }\mbox{\hyperlink{class_data_handler}{DataHandler}}}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{\ \ \ \ DataHandler()\ \{\}\ \ \textcolor{comment}{//\ general\ constructor}}
+\DoxyCodeLine{\ \ \ \ \string~DataHandler()\ \{\}\ \textcolor{comment}{//\ destructor}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ U>}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}\ addData(\textcolor{keyword}{const}\ std::string\ \&ID,\ U\ \&\&value)}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }T\ =\ std::decay\_t<U>;\ \textcolor{comment}{//\ remove\ references\ and\ cv-\/qualifiers}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static\_assert}(!std::is\_pointer<T>::value,\ \textcolor{stringliteral}{"{}DataHandler::addData<T>:\ T\ must\ not\ be\ a\ pointer"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!data.contains(ID))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ data[ID]\ =\ FutureData();}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_data_handler_a04e4c614fdf7768af981998aa0b33026}{isDataReady}}(ID))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}ID:\ "{}}\ +\ ID\ +\ \textcolor{stringliteral}{"{}\ -\/\ is\ already\ defined"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ data[ID].setValue<T>(std::move(value));\ \textcolor{comment}{//\ set\ the\ value}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ U>}
+\DoxyCodeLine{\ \ \ \ U\ *getData(std::string\ ID)}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }T\ =\ std::decay\_t<U>;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static\_assert}(!std::is\_pointer<T>::value,\ \textcolor{stringliteral}{"{}DataHandler::addData<T>:\ T\ must\ not\ be\ a\ pointer"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_data_handler_a04e4c614fdf7768af981998aa0b33026}{isDataReady}}(ID))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}ID:\ "{}}\ +\ ID\ +\ \textcolor{stringliteral}{"{}\ -\/\ is\ not\ ready"{}});\ \textcolor{comment}{//\ check\ if\ the\ data\ is\ ready}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data.contains(ID))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data[ID].getValue<T>();\ \textcolor{comment}{//\ get\ the\ data\ from\ the\ map}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}ID:\ "{}}\ +\ ID\ +\ \textcolor{stringliteral}{"{}\ -\/\ is\ not\ defined"{}});}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_data_handler_a04e4c614fdf7768af981998aa0b33026}{isDataReady}}(std::string\ ID)}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data.contains(ID))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data[ID].isReady();\ \textcolor{comment}{//\ check\ if\ the\ data\ is\ ready}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ FutureDataPtr\ \mbox{\hyperlink{class_data_handler_a59b9a8c84fda3f22240540a085bd9657}{requestFutureData}}(std::string\ ID)\ \textcolor{comment}{//\ NOTE:\ THIS\ MAY\ HAVE\ AN\ ISSUE\ WITH\ THE\ FUTUREDATA\ TYPE\ VARIABLE\ BEING\ SET\ AT\ A\ LATER\ TIME\ SINCE}}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data.contains(ID))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ FutureDataPtr(\&data[ID]);\ \textcolor{comment}{//\ return\ a\ pointer\ to\ the\ data}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ data[ID]\ =\ FutureData();\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ create\ a\ new\ FutureData\ if\ it\ doesn't\ exist}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ FutureDataPtr(\&data[ID]);\ \ \ \ \ \textcolor{comment}{//\ return\ a\ pointer\ to\ the\ new\ FutureData}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}\ removeData(std::string\ ID)}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data.contains(ID))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ data.erase(ID);\ \textcolor{comment}{//\ remove\ the\ data\ from\ the\ map}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}ID:\ "{}}\ +\ ID\ +\ \textcolor{stringliteral}{"{}\ -\/\ is\ not\ defined"{}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{\ \ \ \ std::unordered\_map<std::string,\ FutureData>\ data;}
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 

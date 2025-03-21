@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['iparser_0',['IParser',['../class_i_parser.html',1,'']]]
+  ['datahandler_0',['DataHandler',['../class_data_handler.html',1,'']]]
 ];

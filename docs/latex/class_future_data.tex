@@ -1,0 +1,66 @@
+\doxysection{Future\+Data Class Reference}
+\hypertarget{class_future_data}{}\label{class_future_data}\index{FutureData@{FutureData}}
+
+
+A class that encapsulates a future data value, allowing for deferred initialization and retrieval. It uses std\+::any to store the value, enabling it to hold any type of data.  
+
+
+
+
+{\ttfamily \#include $<$Data\+Handler.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_future_data_ad74b7532abbad3891c001e6631cd6e25}{is\+Ready}} ()
+\begin{DoxyCompactList}\small\item\em This method checks if the \doxylink{class_future_data}{Future\+Data} object has been fulfilled (i.\+e., if it contains a value). \end{DoxyCompactList}\item 
+\Hypertarget{class_future_data_aae2efb0c491a1796b76e9e43b2a4fadd}\label{class_future_data_aae2efb0c491a1796b76e9e43b2a4fadd} 
+{\footnotesize template$<$typename U$>$ }\\U \texorpdfstring{$\ast$}{*} {\bfseries get\+Value} ()
+\item 
+\Hypertarget{class_future_data_ac56dfa17309b5e2c14e1b0e3bee251d7}\label{class_future_data_ac56dfa17309b5e2c14e1b0e3bee251d7} 
+{\footnotesize template$<$typename T$>$ }\\void {\bfseries set\+Value} (std\+::shared\+\_\+ptr$<$ T $>$ \&\&p)
+\item 
+\Hypertarget{class_future_data_a9878e865549a2607adc76cc66fc6cb4e}\label{class_future_data_a9878e865549a2607adc76cc66fc6cb4e} 
+{\footnotesize template$<$typename T$>$ }\\void {\bfseries set\+Value} (T \&\&value)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A class that encapsulates a future data value, allowing for deferred initialization and retrieval. It uses std\+::any to store the value, enabling it to hold any type of data. 
+
+\begin{DoxyNote}{Note}
+This class is not thread-\/safe and should be used in a single-\/threaded context or with appropriate synchronization. 
+
+The class provides methods to check if the data is ready, set a value, and retrieve the value. 
+
+The class also provides a pointer wrapper (\doxylink{class_future_data_ptr}{Future\+Data\+Ptr}) for easier management of the \doxylink{class_future_data}{Future\+Data} object. 
+
+The class uses static assertions to ensure that the type T is not a pointer and is convertible to std\+::any. 
+\end{DoxyNote}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}}.\end{Desc}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_future_data_ad74b7532abbad3891c001e6631cd6e25}\index{FutureData@{FutureData}!isReady@{isReady}}
+\index{isReady@{isReady}!FutureData@{FutureData}}
+\doxysubsubsection{\texorpdfstring{isReady()}{isReady()}}
+{\footnotesize\ttfamily \label{class_future_data_ad74b7532abbad3891c001e6631cd6e25} 
+bool Future\+Data\+::is\+Ready (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method checks if the \doxylink{class_future_data}{Future\+Data} object has been fulfilled (i.\+e., if it contains a value). 
+
+\begin{DoxyReturn}{Returns}
+Returns true if the \doxylink{class_future_data}{Future\+Data} object has been fulfilled, false otherwise. 
+\end{DoxyReturn}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2_users_2nicholaspatapoff_2_documents_2_git_hub_2_modular_compute_pipeline_2include_2_data_handler_8h-example}{/\+Users/nicholaspatapoff/\+Documents/\+Git\+Hub/\+Modular\+Compute\+Pipeline/include/\+Data\+Handler.\+h}}.\end{Desc}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Data\+Handler.\+h\end{DoxyCompactItemize}

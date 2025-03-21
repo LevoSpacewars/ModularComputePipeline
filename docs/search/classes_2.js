@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sample_5fclass_0',['sample_class',['../classsample__class.html',1,'']]]
+  ['iparser_0',['IParser',['../class_i_parser.html',1,'']]]
 ];

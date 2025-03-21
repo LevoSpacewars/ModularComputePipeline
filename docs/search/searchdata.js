@@ -1,8 +1,8 @@
 var indexSectionsWithContent =
 {
-  0: "dist",
-  1: "dis",
-  2: "t"
+  0: "adfgilpr",
+  1: "dfip",
+  2: "agilpr"
 };
 
 var indexSectionNames =

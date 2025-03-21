@@ -1,0 +1,88 @@
+\doxysection{plugin\+Manager Class Reference}
+\hypertarget{classplugin_manager}{}\label{classplugin_manager}\index{pluginManager@{pluginManager}}
+
+
+Define a function pointer for the init function.  
+
+
+
+
+{\ttfamily \#include $<$Plugin\+Manager.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classplugin_manager_a3e76578bf147602292d7728f417690df}\label{classplugin_manager_a3e76578bf147602292d7728f417690df} 
+{\bfseries plugin\+Manager} ()=default
+\begin{DoxyCompactList}\small\item\em Initializer. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classplugin_manager_a57093914f99c29c020d4fe5f5c0ef4a0}{load\+Plugin}} (const std\+::string plugin\+\_\+path)
+\begin{DoxyCompactList}\small\item\em With input plugin\+\_\+path, loads and return void\texorpdfstring{$\ast$}{*} plugin. \end{DoxyCompactList}\item 
+std\+::unordered\+\_\+map$<$ std\+::string, void \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classplugin_manager_a0f42d3bfb691815ca83ed133a73f57bb}{auto\+Load\+DIR}} (std\+::string dir\+Path)
+\begin{DoxyCompactList}\small\item\em With input Directory path, loads all plugins (in the form of shared libraries) as void\texorpdfstring{$\ast$}{*} and returns a hashmap. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Define a function pointer for the init function. 
+
+Class that dynamically loads plugins (in the form of shared libraries) at runtime. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classplugin_manager_a0f42d3bfb691815ca83ed133a73f57bb}\index{pluginManager@{pluginManager}!autoLoadDIR@{autoLoadDIR}}
+\index{autoLoadDIR@{autoLoadDIR}!pluginManager@{pluginManager}}
+\doxysubsubsection{\texorpdfstring{autoLoadDIR()}{autoLoadDIR()}}
+{\footnotesize\ttfamily \label{classplugin_manager_a0f42d3bfb691815ca83ed133a73f57bb} 
+std\+::unordered\+\_\+map$<$ std\+::string, void \texorpdfstring{$\ast$}{*} $>$ plugin\+Manager\+::auto\+Load\+DIR (\begin{DoxyParamCaption}\item[{std\+::string}]{dir\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+With input Directory path, loads all plugins (in the form of shared libraries) as void\texorpdfstring{$\ast$}{*} and returns a hashmap. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em std\+::string} & dir\+Path containing set of shared libraries \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::unordered\+\_\+map$<$std\+::string, void \texorpdfstring{$\ast$}{*}$>$ 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+hash keys are shared library file names devoid of the file extension. 
+
+see load\+Plugin method for more information on loaded plugins. 
+\end{DoxyNote}
+\Hypertarget{classplugin_manager_a57093914f99c29c020d4fe5f5c0ef4a0}\index{pluginManager@{pluginManager}!loadPlugin@{loadPlugin}}
+\index{loadPlugin@{loadPlugin}!pluginManager@{pluginManager}}
+\doxysubsubsection{\texorpdfstring{loadPlugin()}{loadPlugin()}}
+{\footnotesize\ttfamily \label{classplugin_manager_a57093914f99c29c020d4fe5f5c0ef4a0} 
+void \texorpdfstring{$\ast$}{*} plugin\+Manager\+::load\+Plugin (\begin{DoxyParamCaption}\item[{const std\+::string}]{plugin\+\_\+path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+With input plugin\+\_\+path, loads and return void\texorpdfstring{$\ast$}{*} plugin. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em std\+::string} & plugin\+\_\+path \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+file pathed must be .so (shared library). 
+
+shared libraries must be recompiled on each device. 
+\end{DoxyNote}
+\begin{DoxyReturn}{Returns}
+void \texorpdfstring{$\ast$}{*} 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+description for return of dlopen() \href{https://man7.org/linux/man-pages/man3/dlopen.3.html}{\texttt{ https\+://man7.\+org/linux/man-\/pages/man3/dlopen.\+3.\+html}} 
+\end{DoxySeeAlso}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em dlerror()} & if dlopen(plugin\+\_\+path, RTLD\+\_\+\+LAZY) returns a null pointer \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Plugin\+Manager.\+h\end{DoxyCompactItemize}
