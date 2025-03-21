@@ -24,7 +24,19 @@ std\+::unordered\+\_\+map$<$ std\+::string, void \texorpdfstring{$\ast$}{*} $>$ 
 \doxysubsection{Detailed Description}
 Define a function pointer for the init function. 
 
-Class that dynamically loads plugins (in the form of shared libraries) at runtime. 
+Class that dynamically loads plugins (in the form of shared libraries) at runtime. \begin{DoxyNote}{Note}
+To load and use a plug in one must 1. load the plugin 2. define an alias for a function pointer type 3. create a variable to contain the function 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classplugin_manager_a3e76578bf147602292d7728f417690df}{pluginManager}}\ PG();}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ *plugin\_test\ =\ PG.loadPlugin(\textcolor{stringliteral}{"{}plugins/plugin\_test.so"{}});\ \textcolor{comment}{//\ Specify\ plugin\ directory}}
+\DoxyCodeLine{\textcolor{keyword}{using\ }someFunCast\ =\ void\ (*)();\ \textcolor{comment}{//\ define\ alias}}
+\DoxyCodeLine{someFunCast\ init\ =\ \textcolor{keyword}{reinterpret\_cast<}someFunCast\textcolor{keyword}{>}(dlsym(plugin\_test,\ \textcolor{stringliteral}{"{}init"{}}));\ \textcolor{comment}{//assign\ variable}}
+\DoxyCodeLine{init();\ \textcolor{comment}{//\ call\ function}}
+
+\end{DoxyCode}
+ 
+\end{DoxyNote}
+
 
 \doxysubsection{Member Function Documentation}
 \Hypertarget{classplugin_manager_a0f42d3bfb691815ca83ed133a73f57bb}\index{pluginManager@{pluginManager}!autoLoadDIR@{autoLoadDIR}}
@@ -71,7 +83,7 @@ file pathed must be .so (shared library).
 shared libraries must be recompiled on each device. 
 \end{DoxyNote}
 \begin{DoxyReturn}{Returns}
-void \texorpdfstring{$\ast$}{*} 
+void \texorpdfstring{$\ast$}{*} of shared library 
 \end{DoxyReturn}
 \begin{DoxySeeAlso}{See also}
 description for return of dlopen() \href{https://man7.org/linux/man-pages/man3/dlopen.3.html}{\texttt{ https\+://man7.\+org/linux/man-\/pages/man3/dlopen.\+3.\+html}} 

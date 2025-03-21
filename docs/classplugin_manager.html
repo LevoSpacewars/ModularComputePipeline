@@ -129,7 +129,13 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Define a function pointer for the init function. </p>
-<p>Class that dynamically loads plugins (in the form of shared libraries) at runtime. </p>
+<p>Class that dynamically loads plugins (in the form of shared libraries) at runtime. </p><dl class="section note"><dt>Note</dt><dd>To load and use a plug in one must 1. load the plugin 2. define an alias for a function pointer type 3. create a variable to contain the function <div class="fragment"><div class="line"><a class="code hl_function" href="#a3e76578bf147602292d7728f417690df">pluginManager</a> PG();</div>
+<div class="line"><span class="keywordtype">void</span> *plugin_test = PG.loadPlugin(<span class="stringliteral">&quot;plugins/plugin_test.so&quot;</span>); <span class="comment">// Specify plugin directory</span></div>
+<div class="line"><span class="keyword">using </span>someFunCast = void (*)(); <span class="comment">// define alias</span></div>
+<div class="line">someFunCast init = <span class="keyword">reinterpret_cast&lt;</span>someFunCast<span class="keyword">&gt;</span>(dlsym(plugin_test, <span class="stringliteral">&quot;init&quot;</span>)); <span class="comment">//assign variable</span></div>
+<div class="line">init(); <span class="comment">// call function</span></div>
+<div class="ttc" id="aclassplugin_manager_html_a3e76578bf147602292d7728f417690df"><div class="ttname"><a href="#a3e76578bf147602292d7728f417690df">pluginManager::pluginManager</a></div><div class="ttdeci">pluginManager()=default</div><div class="ttdoc">Initializer.</div></div>
+</div><!-- fragment --> </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a0f42d3bfb691815ca83ed133a73f57bb" name="a0f42d3bfb691815ca83ed133a73f57bb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0f42d3bfb691815ca83ed133a73f57bb">&#9670;&#160;</a></span>autoLoadDIR()</h2>
@@ -201,7 +207,7 @@ see loadPlugin method for more information on loaded plugins. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>file pathed must be .so (shared library). </dd>
 <dd>
 shared libraries must be recompiled on each device. </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>void * </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>void * of shared library </dd></dl>
 <dl class="section see"><dt>See also</dt><dd>description for return of dlopen() <a href="https://man7.org/linux/man-pages/man3/dlopen.3.html">https://man7.org/linux/man-pages/man3/dlopen.3.html</a> </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">

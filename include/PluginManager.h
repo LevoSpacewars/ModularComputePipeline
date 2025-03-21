@@ -8,6 +8,14 @@
 //! Define a function pointer for the init function
 
 /// @brief Class that dynamically loads plugins (in the form of shared libraries) at runtime.
+/// @note To load and use a plug in one must 1. load the plugin 2. define an alias for a function pointer type 3. create a variable to contain the function
+/// @code
+/// pluginManager PG();
+/// void *plugin_test = PG.loadPlugin("plugins/plugin_test.so"); // Specify plugin directory
+/// using someFunCast = void (*)(); // define alias
+/// someFunCast init = reinterpret_cast<someFunCast>(dlsym(plugin_test, "init")); //assign variable
+/// init(); // call function
+/// @endcode
 class pluginManager
 {
 public:
@@ -18,11 +26,9 @@ public:
     /// @param std::string plugin_path
     /// @note file pathed must be .so (shared library).
     /// @note shared libraries must be recompiled on each device.
-    /// @return void *
+    /// @return void * of shared library
     /// @see description for return of dlopen() https://man7.org/linux/man-pages/man3/dlopen.3.html
-
     /// @throws dlerror() if dlopen(plugin_path, RTLD_LAZY) returns a null pointer
-
     void *loadPlugin(const std::string plugin_path)
     {
 
@@ -41,7 +47,6 @@ public:
     /// @return std::unordered_map<std::string, void *>
     /// @note hash keys are shared library file names devoid of the file extension.
     /// @note see loadPlugin method for more information on loaded plugins.
-
     std::unordered_map<std::string, void *> autoLoadDIR(std::string dirPath)
     {
 
